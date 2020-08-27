@@ -4,8 +4,7 @@
 import os
 import time
 
-from discordsdk import Discord
-from discordsdk.enum import CreateFlags
+import discordsdk as dsdk
 
 
 class Game:
@@ -16,7 +15,7 @@ class Game:
         self.instanceId = instanceId
         os.environ["DISCORD_INSTANCE_ID"] = str(self.instanceId)
 
-        self.discord = Discord(Game.ApplicationId, CreateFlags.Default)
+        self.discord = dsdk.Discord(Game.ApplicationId, dsdk.CreateFlags.Default)
 
         self.networkManager = self.discord.GetNetworkManager()
         self.networkManager.OnRouteUpdate = self.onRouteUpdate

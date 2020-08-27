@@ -1,8 +1,6 @@
 import time
 
-from discordsdk import Discord
-from discordsdk.enum import CreateFlags, ImageType, Result
-from discordsdk.model import ImageHandle
+import discordsdk as dsdk
 from PIL import Image
 
 
@@ -11,14 +9,14 @@ with open("application_id.txt", "r") as file:
     applicationId = int(file.read())
 
 # we create the discord instance
-app = Discord(applicationId,  CreateFlags.Default)
+app = dsdk.Discord(applicationId,  dsdk.CreateFlags.Default)
 userManager = app.GetUserManager()
 imageManager = app.GetImageManager()
 
 
 # callbacks
 def onImageLoaded(result, handle):
-    if result != Result.Ok:
+    if result != dsdk.Result.Ok:
         print("failed to fetch the image (result " + str(result) + ")")
     else:
         print("fetched the image!")
@@ -39,8 +37,8 @@ def onCurrentUserUpdate():
     print(f"hello, {user.Username}#{user.Discriminator}!")
 
     # we create an handle
-    handle = ImageHandle()
-    handle.Type = ImageType.User
+    handle = dsdk.ImageHandle()
+    handle.Type = dsdk.ImageType.User
     handle.Id = user.Id
     handle.Size = 256
 

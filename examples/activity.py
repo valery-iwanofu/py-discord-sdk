@@ -1,9 +1,7 @@
 import time
 import uuid
 
-from discordsdk import Discord
-from discordsdk.enum import ActivityJoinRequestReply, CreateFlags, Result
-from discordsdk.model import Activity
+import discordsdk as dsdk
 
 # we get the application id from a file
 with open("application_id.txt", "r") as file:
@@ -12,14 +10,14 @@ with open("application_id.txt", "r") as file:
 
 # debug callback
 def debugCallback(debug, result, *args):
-    if result == Result.Ok:
+    if result == dsdk.Result.Ok:
         print(debug, "success")
     else:
         print(debug, "failure", result, args)
 
 
 # we create the discord instance
-app = Discord(applicationId,  CreateFlags.Default)
+app = dsdk.Discord(applicationId, dsdk.CreateFlags.Default)
 activityManager = app.GetActivityManager()
 
 
@@ -40,7 +38,7 @@ def onActivityJoinRequest(user):
 
     activityManager.SendRequestReply(
         user.Id,
-        ActivityJoinRequestReply.Yes,
+        dsdk.ActivityJoinRequestReply.Yes,
         lambda result: debugCallback("SendRequestReply", result)
     )
 
@@ -61,7 +59,7 @@ activityManager.OnActivityJoinRequest = onActivityJoinRequest
 activityManager.OnActivityInvite = onActivityInvite
 
 # we create an activity
-activity = Activity()
+activity = dsdk.Activity()
 activity.State = "Testing Game SDK"
 activity.Party.Id = str(uuid.uuid4())
 activity.Party.Size.CurrentSize = 4

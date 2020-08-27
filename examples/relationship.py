@@ -1,8 +1,7 @@
 import random
 import time
 
-from discordsdk import Discord
-from discordsdk.enum import CreateFlags, RelationshipType
+import discordsdk as dsdk
 
 
 # we get the application id from a file
@@ -10,7 +9,7 @@ with open("application_id.txt", "r") as file:
     applicationId = int(file.read())
 
 # we create the discord instance
-app = Discord(applicationId,  CreateFlags.Default)
+app = dsdk.Discord(applicationId,  dsdk.CreateFlags.Default)
 relationshipManager = app.GetRelationshipManager()
 
 
@@ -19,7 +18,9 @@ def onRefresh():
     print("[onRefresh]")
 
     # we filter friends
-    relationshipManager.Filter(lambda relationship: relationship.Type == RelationshipType.Friend)
+    relationshipManager.Filter(
+        lambda relationship: relationship.Type == dsdk.RelationshipType.Friend
+    )
 
     # we get how many friends we have!!
     friendCount = relationshipManager.Count()
@@ -47,7 +48,9 @@ def onRefresh():
         print("we found %s" % friend.User.Username)
 
     # let's get implicit relationships
-    relationshipManager.Filter(lambda relationship: relationship.Type == RelationshipType.Implicit)
+    relationshipManager.Filter(
+        lambda relationship: relationship.Type == dsdk.RelationshipType.Implicit
+    )
 
     print()
     print("implicit relationships:")
