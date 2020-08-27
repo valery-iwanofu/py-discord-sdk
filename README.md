@@ -1,7 +1,5 @@
 # Discord Game SDK for Python
 
-This is **not** a module. This was made for **Python >= 3.5** and **Discord Game SDK 2.5.6**
-
 This is a **Work In Progress:** it might not work as expected or not work at all. This was made for testing purposes.
 
 ## Installation
@@ -19,21 +17,21 @@ If you need documentation, look at [**the official Game SDK docs**](https://disc
 
 ## Features
 
-* Should be working:
-  * **ActivityManager**
-  * **ImageManager**
-  * **NetworkManager**
-  * **RelationshipManager**
-  * **StorageManager**
-  * **UserManager** 
+- Should be working:
+  - **ActivityManager**
+  - **ImageManager**
+  - **NetworkManager**
+  - **RelationshipManager**
+  - **StorageManager**
+  - **UserManager**
 
-* Should be working, but need more testing:
-  * **AchievementManager** (not tested at all)
-  * **ApplicationManager** (especially the functions `GetTicket` and `ValidateOrExit`)
-  * **LobbyManager**
-  * **OverlayManager**
-  * **StoreManager** (not tested at all)
-  * **VoiceManager**
+- Should be working, but need more testing:
+  - **AchievementManager** (not tested at all)
+  - **ApplicationManager** (especially the functions `GetTicket` and `ValidateOrExit`)
+  - **LobbyManager**
+  - **OverlayManager**
+  - **StoreManager** (not tested at all)
+  - **VoiceManager**
 
 ## Contributing
 
@@ -73,7 +71,7 @@ userManager = app.GetUserManager()
 def onCurrUserUpdate():
     user = userManager.GetCurrentUser()
     print(f"Current user : {user.Username}#{user.Discriminator}")
-    
+
 userManager.OnCurrentUserUpdate = onCurrUserUpdate
 
 # Don't forget to call RunCallbacks
@@ -106,7 +104,7 @@ def callback(result):
         print("Successfully set the activity!")
     else:
         raise Exception(result)
-        
+
 activityManager.UpdateActivity(activity, callback)
 
 # Don't forget to call RunCallbacks
