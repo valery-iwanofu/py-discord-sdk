@@ -8,8 +8,8 @@ This is a **Work In Progress:** it might not work as expected or not work at all
   - [Discord Game SDK (2.5.6)](https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip)
   - [Discord Game SDK for Python](https://github.com/NathaanTFM/discord-game-sdk-python/archive/master.zip)
 
-- Grab the DLL from `discord_game_sdk.zip` in the `lib` directory and put it in your project directory
-- Grab the `discord` directory from `master.zip` and put it in your project directory
+- Grab the DLL from `discord_game_sdk.zip` in the `lib` directory and put it in your project's `lib` directory.
+- Grab the `discord` directory from `master.zip` and put it in your project directory.
 
 ## Documentation
 

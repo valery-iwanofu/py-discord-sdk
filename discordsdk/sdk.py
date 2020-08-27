@@ -1,7 +1,7 @@
 import os.path
 import ctypes
 
-dll = ctypes.CDLL(os.path.abspath("discord_game_sdk"))
+dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk"))
 DiscordCreate = dll.DiscordCreate
 
 DiscordClientId = ctypes.c_int64
