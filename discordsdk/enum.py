@@ -5,6 +5,7 @@ if sys.version_info >= (3, 6):
 else:
     from enum import IntEnum, IntEnum as IntFlag
 
+
 class Result(IntEnum):
     Ok = 0
     ServiceUnavailable = 1
@@ -50,17 +51,20 @@ class Result(IntEnum):
     InvalidGiftCode = 41
     PurchaseError = 42
     TransactionAborted = 43
-    #DrawingInitFailed = 44
-    
+    # DrawingInitFailed = 44
+
+
 class LogLevel(IntEnum):
     Error = 0
     Warning = 1
     Info = 2
     Debug = 3
-    
+
+
 class CreateFlags(IntFlag):
     Default = 0
     NoRequireDiscord = 1
+
 
 class UserFlag(IntFlag):
     Partner = 2
@@ -68,27 +72,32 @@ class UserFlag(IntFlag):
     HypeSquadHouse1 = 64
     HypeSquadHouse2 = 128
     HypeSquadHouse3 = 256
-    
+
+
 class PremiumType(IntEnum):
     None_ = 0
     Tier1 = 1
     Tier2 = 2
-    
+
+
 class ActivityType(IntEnum):
     Playing = 0
     Streaming = 1
     Listening = 2
     Custom = 4
-    
+
+
 class ActivityJoinRequestReply(IntEnum):
     No = 0
     Yes = 1
     Ignore = 2
-    
+
+
 class ActivityActionType(IntEnum):
     Join = 1
     Spectate = 2
-    
+
+
 class RelationshipType(IntEnum):
     None_ = 0
     Friend = 1
@@ -96,20 +105,24 @@ class RelationshipType(IntEnum):
     PendingIncoming = 3
     PendingOutgoing = 4
     Implicit = 5
-    
+
+
 class Status(IntEnum):
     Offline = 0
     Online = 1
     Idle = 2
     DoNotDisturb = 3
-    
+
+
 class ImageType(IntEnum):
     User = 0
-    
+
+
 class LobbyType(IntEnum):
     Private = 1
     Public = 2
-    
+
+
 class LobbySearchComparison(IntEnum):
     LessThanOrEqual = -2
     LessThan = -1
@@ -117,27 +130,32 @@ class LobbySearchComparison(IntEnum):
     GreaterThan = 1
     GreaterThanOrEqual = 2
     NotEqual = 3
-    
+
+
 class LobbySearchCast(IntEnum):
     String = 1
     Number = 2
-    
+
+
 class LobbySearchDistance(IntEnum):
     Local = 0
     Default = 1
     Extended = 2
     Global = 3
-    
+
+
 class InputModeType(IntEnum):
     VoiceActivity = 0
     PushToTalk = 1
-    
+
+
 class SkuType(IntEnum):
     Application = 1
     DLC = 2
     Consumable = 3
     Bundle = 4
-    
+
+
 class EntitlementType(IntEnum):
     Purchase = 1
     PremiumSubscription = 2
