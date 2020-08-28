@@ -2,7 +2,7 @@
 
 A Python wrapper around Discord's Game SDK.
 
-**NOTE**: This is entirely experimental, and may not work as intended. Please report all bugs to the [GitHub issue tracker](https://github.com/DoAltPlusF4/discord-game-sdk-python/issues).
+**NOTE**: This is entirely experimental, and may not work as intended. Please report all bugs to the [GitHub issue tracker](https://github.com/DoAltPlusF4/discord-sdk/issues).
 
 **Credit to [NathaanTFM](https://github.com/NathaanTFM) for creating the [original library](https://github.com/NathaanTFM/discord-game-sdk-python).**
 
