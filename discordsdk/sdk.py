@@ -1,5 +1,6 @@
-import os.path
 import ctypes
+import os.path
+import typing as t
 
 dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk"))
 DiscordCreate = dll.DiscordCreate
@@ -451,9 +452,20 @@ class IDiscordActivityEvents(ctypes.Structure):
         )),
     ]
 
+    on_activity_join: t.Callable[..., None]
+    on_activity_spectate: t.Callable[..., None]
+    on_activity_join_request: t.Callable[..., None]
+    on_activity_invite: t.Callable[..., None]
+
 
 class IDiscordActivityManager(ctypes.Structure):
-    pass
+    register_command: t.Callable[..., ctypes.c_int32]
+    register_steam: t.Callable[..., ctypes.c_int32]
+    update_activity: t.Callable[..., None]
+    clear_activity: t.Callable[..., None]
+    send_request_reply: t.Callable[..., None]
+    send_invite: t.Callable[..., None]
+    accept_invite: t.Callable[..., None]
 
 
 IDiscordActivityManager._fields_ = [
@@ -464,7 +476,6 @@ IDiscordActivityManager._fields_ = [
     )),
     ("register_steam", ctypes.CFUNCTYPE(
         ctypes.c_int32,
-
         ctypes.POINTER(IDiscordActivityManager),
         ctypes.c_int32
     )),
@@ -1333,9 +1344,15 @@ class IDiscordAchievementEvents(ctypes.Structure):
         )),
     ]
 
+    on_user_achievement_update: t.Callable[[DiscordUserAchievement], None]
+
 
 class IDiscordAchievementManager(ctypes.Structure):
-    pass
+    set_user_achievement: t.Callable[..., None]
+    fetch_user_achievements: t.Callable[..., None]
+    count_user_achievements: t.Callable[..., None]
+    get_user_achievement: t.Callable[..., ctypes.c_int32]
+    get_user_achievement_at: t.Callable[..., ctypes.c_int32]
 
 
 IDiscordAchievementManager._fields_ = [

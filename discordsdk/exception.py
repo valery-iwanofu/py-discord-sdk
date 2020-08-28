@@ -15,5 +15,5 @@ for res in Result:
     exceptions[res] = exception
 
 
-def getException(result):
+def get_exception(result):
     return exceptions.get(result, DiscordException)("result " + str(result.value))

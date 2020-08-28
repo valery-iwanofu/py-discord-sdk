@@ -5,49 +5,49 @@ import discordsdk as dsdk
 
 # we get the application id from a file
 with open("application_id.txt", "r") as file:
-    applicationId = int(file.read())
+    application_id = int(file.read())
 
 # we create the discord instance
-app = dsdk.Discord(applicationId,  dsdk.CreateFlags.Default)
-userManager = app.GetUserManager()
+app = dsdk.Discord(application_id, dsdk.CreateFlags.default)
+user_manager = app.get_user_manager()
 
 
 # events
-def onCurrentUserUpdate():
-    print("[onCurrentUserUpdate]")
-    user = userManager.GetCurrentUser()
-    print(f"hello, {user.Username}#{user.Discriminator}!")
+def on_current_user_update():
+    print("[on_current_user_update]")
+    user = user_manager.get_current_user()
+    print(f"Hello, {user.username}#{user.discriminator}!")
 
-    premiumType = userManager.GetCurrentUserPremiumType()
-    if premiumType == dsdk.PremiumType.None_:
-        print("you are not a nitro subscriber :(")
-    elif premiumType == dsdk.PremiumType.Tier1:
-        print("you are a nitro classic subscriber!")
-    elif premiumType == dsdk.PremiumType.Tier2:
-        print("you are a nitro subscriber!")
+    premium_type = user_manager.get_current_user_premium_type()
+    if premium_type == dsdk.PremiumType.none_:
+        print("You are not a nitro subscriber.")
+    elif premium_type == dsdk.PremiumType.tier_1:
+        print("You are a nitro classic subscriber!")
+    elif premium_type == dsdk.PremiumType.tier_2:
+        print("You are a nitro subscriber!")
 
-    if userManager.CurrentUserHasFlag(dsdk.UserFlag.HypeSquadHouse1):
-        print("you are a member of house bravery")
-    if userManager.CurrentUserHasFlag(dsdk.UserFlag.HypeSquadHouse2):
-        print("you are a member of house brillance")
-    if userManager.CurrentUserHasFlag(dsdk.UserFlag.HypeSquadHouse3):
-        print("you are a member of house balance")
+    if user_manager.current_user_has_flag(dsdk.UserFlag.hype_squad_house_1):
+        print("You are a member of house bravery.")
+    if user_manager.current_user_has_flag(dsdk.UserFlag.hype_squad_house_2):
+        print("You are a member of house brillance.")
+    if user_manager.current_user_has_flag(dsdk.UserFlag.hype_squad_house_3):
+        print("You are a member of house balance.")
 
 
 # bind events
-userManager.OnCurrentUserUpdate = onCurrentUserUpdate
+user_manager.on_current_user_update = on_current_user_update
 
 
 def callback(result, user):
-    if result != dsdk.Result.Ok:
-        print("we failed to get user (result " + str(result) + ")")
+    if result != dsdk.Result.ok:
+        print(f"We failed to get user (result {result})")
     else:
-        print("we have found the user! " + str(user.Username) + "#" + str(user.Discriminator))
+        print(f"We have found the owner! {user.username}#{user.discriminator}")
 
 
 # we search for the owner of the repo
-userManager.GetUser(336834315130503169, callback)
+user_manager.get_user(425340416531890178, callback)
 
 while 1:
     time.sleep(1/10)
-    app.RunCallbacks()
+    app.run_callbacks()

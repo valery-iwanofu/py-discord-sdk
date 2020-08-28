@@ -6,68 +6,68 @@ import discordsdk as dsdk
 
 # we get the application id from a file
 with open("application_id.txt", "r") as file:
-    applicationId = int(file.read())
+    application_id = int(file.read())
 
 # we create the discord instance
-app = dsdk.Discord(applicationId,  dsdk.CreateFlags.Default)
-relationshipManager = app.GetRelationshipManager()
+app = dsdk.Discord(application_id,  dsdk.CreateFlags.default)
+relationship_manager = app.get_relationship_manager()
 
 
 # events
-def onRefresh():
-    print("[onRefresh]")
+def on_refresh():
+    print("[on_refresh]")
 
     # we filter friends
-    relationshipManager.Filter(
-        lambda relationship: relationship.Type == dsdk.RelationshipType.Friend
+    relationship_manager.filter(
+        lambda relationship: relationship.type == dsdk.RelationshipType.friend
     )
 
     # we get how many friends we have!!
-    friendCount = relationshipManager.Count()
+    friend_count = relationship_manager.count()
     friends = []
-    print("you have " + str(friendCount) + " friends!")
+    print(f"You have {friend_count} friends!")
 
-    for n in range(friendCount):
+    for n in range(friend_count):
         # we get the friend at index n
-        friend = relationshipManager.GetAt(n)
+        friend = relationship_manager.get_at(n)
 
         # we add it to the list
         friends.append(friend)
 
         # we show it
-        print(f"{friend.User.Username}#{friend.User.Discriminator}")
+        print(f"{friend.user.username}#{friend.user.discriminator}")
 
     if len(friends):
         print()
 
         # we get the friend with a random friend, by his ID
-        randomFriend = random.choice(friends)
-        print("fetching " + str(randomFriend.User.Id))
+        random_friend = random.choice(friends)
+        print(f"Fetching {random_friend.user.id}")
 
-        friend = relationshipManager.Get(randomFriend.User.Id)
-        print("we found %s" % friend.User.Username)
+        friend = relationship_manager.get(random_friend.user.id)
+        print(f"We found {friend.user.username}.")
 
     # let's get implicit relationships
-    relationshipManager.Filter(
-        lambda relationship: relationship.Type == dsdk.RelationshipType.Implicit
+    relationship_manager.filter(
+        lambda relationship: relationship.type == dsdk.RelationshipType.implicit
     )
 
     print()
-    print("implicit relationships:")
-    for n in range(relationshipManager.Count()):
-        relationship = relationshipManager.GetAt(n)
-        print(f"  {relationship.User.Username}#{relationship.User.Discriminator}")
+    print("Implicit relationships:")
+    for n in range(relationship_manager.count()):
+        relationship = relationship_manager.get_at(n)
+        print(f"  {relationship.user.username}#{relationship.user.discriminator}")
 
 
-def onRelationshipUpdate(relationship):
-    print("[onRelationshipUpdate]")
-    print("relationship", relationship.User.Username)
+def on_relationship_update(relationship):
+    print("[on_relationship_update]")
+    print(f"Relationship {relationship.user.username}")
 
 
 # bind events
-relationshipManager.OnRefresh = onRefresh
-relationshipManager.OnRelationshipUpdate = onRelationshipUpdate
+relationship_manager.on_refresh = on_refresh
+relationship_manager.on_relationship_update = on_relationship_update
 
 while 1:
     time.sleep(1/10)
-    app.RunCallbacks()
+    app.run_callbacks()

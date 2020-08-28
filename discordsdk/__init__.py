@@ -1,15 +1,15 @@
 from . import sdk
 from .achievement import AchievementManager
 from .activity import ActivityManager
-from .application import ApplicationManager, SignedAppTicket
+from .application import ApplicationManager
 from .discord import Discord
 from .enum import (
     ActivityActionType, ActivityJoinRequestReply, ActivityType, CreateFlags,
     EntitlementType, ImageType, InputModeType, LobbySearchCast,
     LobbySearchComparison, LobbySearchDistance, LobbyType, LogLevel,
     PremiumType, RelationshipType, Result, SkuType, Status, UserFlag)
-from .event import bindEvents
-from .exception import DiscordException, exceptions, getException
+from .event import bind_events
+from .exception import DiscordException, exceptions, get_exception
 from .image import ImageManager
 from .lobby import (LobbyManager, LobbyMemberTransaction, LobbySearchQuery,
                     LobbyTransaction)
@@ -30,14 +30,14 @@ __all__ = [
     "sdk",
     "AchievementManager",
     "ActivityManager",
-    "ApplicationManager", "SignedAppTicket",
+    "ApplicationManager",
     "Discord",
     "ActivityActionType", "ActivityJoinRequestReply", "ActivityType", "CreateFlags",
     "EntitlementType", "ImageType", "InputModeType", "LobbySearchCast",
     "LobbySearchComparison", "LobbySearchDistance", "LobbyType", "LogLevel",
     "PremiumType", "RelationshipType", "Result", "SkuType", "Status", "UserFlag",
-    "bindEvents",
-    "DiscordException", "exceptions", "getException",
+    "bind_events",
+    "DiscordException", "exceptions", "get_exception",
     "ImageManager",
     "LobbyManager", "LobbyMemberTransaction", "LobbySearchQuery",
     "LobbyTransaction",

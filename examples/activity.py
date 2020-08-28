@@ -5,79 +5,79 @@ import discordsdk as dsdk
 
 # we get the application id from a file
 with open("application_id.txt", "r") as file:
-    applicationId = int(file.read())
+    application_id = int(file.read())
 
 
 # debug callback
-def debugCallback(debug, result, *args):
-    if result == dsdk.Result.Ok:
+def debug_callback(debug, result, *args):
+    if result == dsdk.Result.ok:
         print(debug, "success")
     else:
         print(debug, "failure", result, args)
 
 
 # we create the discord instance
-app = dsdk.Discord(applicationId, dsdk.CreateFlags.Default)
-activityManager = app.GetActivityManager()
+app = dsdk.Discord(application_id, dsdk.CreateFlags.default)
+activity_manager = app.get_activity_manager()
 
 
 # events
-def onActivityJoin(secret):
-    print("[onActivityJoin]")
+def on_activity_join(secret):
+    print("[on_activity_join]")
     print("Secret", secret)
 
 
-def onActivitySpectate(secret):
-    print("[onActivitySpectate]")
+def on_activity_spectate(secret):
+    print("[on_activity_spectate]")
     print("Secret", secret)
 
 
-def onActivityJoinRequest(user):
-    print("[onActivityJoinRequest]")
+def on_activity_join_request(user):
+    print("[on_activity_join_request]")
     print("User", user.Username)
 
-    activityManager.SendRequestReply(
+    activity_manager.send_request_reply(
         user.Id,
-        dsdk.ActivityJoinRequestReply.Yes,
-        lambda result: debugCallback("SendRequestReply", result)
+        dsdk.ActivityJoinRequestReply.yes,
+        lambda result: debug_callback("send_request_reply", result)
     )
 
 
-def onActivityInvite(type, user, activity):
-    print("[onActivityInvite]")
+def on_activity_invite(type, user, activity):
+    print("[on_activity_invite]")
     print("Type", type)
     print("User", user.Username)
     print("Activity", activity.State)
 
-    activityManager.AcceptInvite(user.Id, lambda result: debugCallback("AcceptInvite", result))
+    activity_manager.accept_invite(user.Id, lambda result: debug_callback("accept_invite", result))
 
 
 # bind events
-activityManager.OnActivityJoin = onActivityJoin
-activityManager.OnActivitySpectate = onActivitySpectate
-activityManager.OnActivityJoinRequest = onActivityJoinRequest
-activityManager.OnActivityInvite = onActivityInvite
+activity_manager.on_activity_join = on_activity_join
+activity_manager.on_activity_spectate = on_activity_spectate
+activity_manager.on_activity_join_request = on_activity_join_request
+activity_manager.on_activity_invite = on_activity_invite
 
 # we create an activity
 activity = dsdk.Activity()
-activity.State = "Testing Game SDK"
-activity.Party.Id = str(uuid.uuid4())
-activity.Party.Size.CurrentSize = 4
-activity.Party.Size.MaxSize = 8
-activity.Secrets.Join = str(uuid.uuid4())
+activity.state = "Testing Game SDK"
+activity.party.id = str(uuid.uuid4())
+activity.party.size.current_size = 4
+activity.party.size.max_size = 8
+activity.secrets.join = str(uuid.uuid4())
 
 # we update the activity
-activityManager.UpdateActivity(activity, lambda result: debugCallback("UpdateActivity", result))
+activity_manager.update_activity(activity, lambda result: debug_callback("update_activity", result))
 
 # we set the command
-activityManager.RegisterCommand("iexplore.exe http://www.example.com/")
+activity_manager.register_command("iexplore.exe http://www.example.com/")
 
 timer = 0
 
 while 1:
     time.sleep(1/10)
-    app.RunCallbacks()
+    app.run_callbacks()
 
     timer += 1
     if timer == 600:  # clear activity after 60 seconds
-        activityManager.ClearActivity(lambda result: debugCallback("ClearActivity", result))
+        activity_manager.clear_activity(lambda result: debug_callback("clear_activity", result))

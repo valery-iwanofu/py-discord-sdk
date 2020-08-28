@@ -1,46 +1,49 @@
 import ctypes
-from typing import Callable
+import typing as t
 
 from . import sdk
 from .enum import Result
-from .event import bindEvents
-from .exception import getException
+from .event import bind_events
+from .exception import get_exception
 from .model import Entitlement, Sku
 
 
 class StoreManager:
+    _internal: sdk.IDiscordStoreManager = None
+    _garbage: t.List[t.Any]
+    _events: sdk.IDiscordStoreEvents
+
     def __init__(self):
-        self._internal = None
         self._garbage = []
-        self._events = bindEvents(
+        self._events = bind_events(
             sdk.IDiscordStoreEvents,
-            self._OnEntitlementCreate,
-            self._OnEntitlementDelete
+            self._on_entitlement_create,
+            self._on_entitlement_delete
         )
 
-    def _OnEntitlementCreate(self, event_data, entitlement):
-        self.OnEntitlementCreate(Entitlement(copy=entitlement))
+    def _on_entitlement_create(self, event_data, entitlement):
+        self.on_entitlement_create(Entitlement(copy=entitlement))
 
-    def _OnEntitlementDelete(self, event_data, entitlement):
-        self.OnEntitlementDelete(Entitlement(copy=entitlement))
+    def _on_entitlement_delete(self, event_data, entitlement):
+        self.on_entitlement_delete(Entitlement(copy=entitlement))
 
-    def FetchSkus(self, callback: Callable[[Result], None]) -> None:
+    def fetch_skus(self, callback: t.Callable[[Result], None]) -> None:
         """
         Fetches the list of SKUs for the connected application, readying them for iteration.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.fetch_skus.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.fetch_skus.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.fetch_skus(self._internal, ctypes.c_void_p(), CCallback)
+        self._internal.fetch_skus(self._internal, ctypes.c_void_p(), c_callback)
 
-    def CountSkus(self) -> int:
+    def count_skus(self) -> int:
         """
         Get the number of SKUs readied by FetchSkus().
         """
@@ -48,47 +51,47 @@ class StoreManager:
         self._internal.count_skus(self._internal, count)
         return count.value
 
-    def GetSku(self, skuId: int) -> Sku:
+    def get_sku(self, sku_id: int) -> Sku:
         """
         Gets a SKU by its ID.
         """
         sku = sdk.DiscordSku()
 
-        result = Result(self._internal.get_sku(skuId, sku))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.get_sku(sku_id, sku))
+        if result != Result.ok:
+            raise get_exception(result)
 
         return Sku(internal=sku)
 
-    def GetSkuAt(self, index: int) -> Sku:
+    def get_sku_at(self, index: int) -> Sku:
         """
         Gets a SKU by index when iterating over SKUs.
         """
         sku = sdk.DiscordSku()
 
         result = Result(self._internal.get_sku_at(index, sku))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
         return Sku(internal=sku)
 
-    def FetchEntitlements(self, callback: Callable[[Result], None]) -> None:
+    def fetch_entitlements(self, callback: t.Callable[[Result], None]) -> None:
         """
         Fetches a list of entitlements to which the user is entitled.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.fetch_entitlements.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.fetch_entitlements.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.fetch_entitlements(self._internal, ctypes.c_void_p(), CCallback)
+        self._internal.fetch_entitlements(self._internal, ctypes.c_void_p(), c_callback)
 
-    def CountEntitlements(self) -> int:
+    def count_entitlements(self) -> int:
         """
         Get the number of entitlements readied by FetchEntitlements().
         """
@@ -96,68 +99,66 @@ class StoreManager:
         self._internal.count_entitlements(self._internal, count)
         return count.value
 
-    def GetEntitlement(self, entitlementId: int) -> Entitlement:
+    def get_entitlement(self, entitlement_id: int) -> Entitlement:
         """
         Gets an entitlement by its id.
         """
         entitlement = sdk.DiscordEntitlement()
 
-        result = Result(self._internal.get_entitlement(entitlementId, entitlement))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.get_entitlement(entitlement_id, entitlement))
+        if result != Result.ok:
+            raise get_exception(result)
 
         return Entitlement(internal=Sku)
 
-    def GetEntitlementAt(self, index: int) -> Entitlement:
+    def get_entitlement_at(self, index: int) -> Entitlement:
         """
         Gets an entitlement by index when iterating over a user's entitlements.
         """
         entitlement = sdk.DiscordEntitlement()
 
         result = Result(self._internal.get_entitlement_at(index, entitlement))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
         return Entitlement(internal=Sku)
 
-    def HasSkuEntitlement(self, skuId: int) -> bool:
+    def has_sku_entitlement(self, sku_id: int) -> bool:
         """
         Returns whether or not the user is entitled to the given SKU ID.
         """
         has_entitlement = ctypes.c_bool()
 
-        result = Result(self._internal.has_sku_entitlement(skuId, has_entitlement))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.has_sku_entitlement(sku_id, has_entitlement))
+        if result != Result.ok:
+            raise get_exception(result)
 
         return has_entitlement.value
 
-    def StartPurchase(self, skuId: int, callback: Callable[[Result], None]) -> None:
+    def start_purchase(self, sku_id: int, callback: t.Callable[[Result], None]) -> None:
         """
         Opens the overlay to begin the in-app purchase dialogue for the given SKU ID.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.start_purchase.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.start_purchase.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.start_purchase(self._internal, skuId, ctypes.c_void_p(), CCallback)
+        self._internal.start_purchase(self._internal, sku_id, ctypes.c_void_p(), c_callback)
 
-    def OnEntitlementCreate(self, entitlement: Entitlement) -> None:
+    def on_entitlement_create(self, entitlement: Entitlement) -> None:
         """
         Fires when the connected user receives a new entitlement, either through purchase or
         through a developer grant.
         """
-        pass
 
-    def OnEntitlementDelete(self, entitlement: Entitlement) -> None:
+    def on_entitlement_delete(self, entitlement: Entitlement) -> None:
         """
         Fires when the connected user loses an entitlement, either by expiration, revocation, or
         consumption in the case of consumable entitlements.
         """
-        pass

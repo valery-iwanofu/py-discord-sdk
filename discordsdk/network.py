@@ -1,104 +1,111 @@
 import ctypes
+import typing as t
 
 from . import sdk
 from .enum import Result
-from .event import bindEvents
-from .exception import getException
+from .event import bind_events
+from .exception import get_exception
 
 
 class NetworkManager:
+    _internal: sdk.IDiscordNetworkManager = None
+    _garbage: t.List[t.Any]
+    _events: sdk.IDiscordNetworkEvents
+
     def __init__(self):
-        self._internal = None
-        self._events = bindEvents(
+        self._events = bind_events(
             sdk.IDiscordNetworkEvents,
-            self._OnMessage,
-            self._OnRouteUpdate
+            self._on_message,
+            self._on_route_update
         )
 
-    def _OnMessage(self, event_data, peer_id, channel_id, data, data_length):
+    def _on_message(self, event_data, peer_id, channel_id, data, data_length):
         data = bytes(data[:data_length])
-        self.OnMessage(peer_id, channel_id, data)
+        self.on_message(peer_id, channel_id, data)
 
-    def _OnRouteUpdate(self, event_data, route_data):
-        self.OnRouteUpdate(route_data.decode("utf8"))
+    def _on_route_update(self, event_data, route_data):
+        self.on_route_update(route_data.decode("utf8"))
 
-    def GetPeerId(self) -> int:
+    def get_peer_id(self) -> int:
         """
-        Get the networking peer ID for the current user, allowing other users to send packets to
+        Get the networking peer_id for the current user, allowing other users to send packets to
         them.
         """
         peerId = sdk.DiscordNetworkPeerId()
         self._internal.get_peer_id(self._internal, peerId)
         return peerId.value
 
-    def Flush(self) -> None:
+    def flush(self) -> None:
         """
-        Flushes the network
+        Flushes the network.
         """
         result = Result(self._internal.flush(self._internal))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def OpenChannel(self, peerId: int, channelId: int, reliable: bool) -> None:
+    def open_channel(self, peer_id: int, channel_id: int, reliable: bool) -> None:
         """
-        Opens a channel to a user with their given peer ID on the given channel number.
+        Opens a channel to a user with their given peer_id on the given channel number.
         """
-        result = Result(self._internal.open_channel(self._internal, peerId, channelId, reliable))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.open_channel(self._internal, peer_id, channel_id, reliable))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def OpenPeer(self, peerId: int, route: str) -> None:
+    def open_peer(self, peer_id: int, route: str) -> None:
         """
         Opens a network connection to another Discord user.
         """
         route_data = ctypes.create_string_buffer(route.encode("utf8"))
-        result = Result(self._internal.open_peer(self._internal, peerId, route_data))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.open_peer(self._internal, peer_id, route_data))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def UpdatePeer(self, peerId: int, route: str) -> None:
+    def update_peer(self, peer_id: int, route: str) -> None:
         """
         Updates the network connection to another Discord user.
         """
         route_data = ctypes.create_string_buffer(route.encode("utf8"))
-        result = Result(self._internal.update_peer(self._internal, peerId, route_data))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.update_peer(self._internal, peer_id, route_data))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def SendMessage(self, peerId: int, channelId: int, data: bytes) -> None:
+    def send_message(self, peer_id: int, channel_id: int, data: bytes) -> None:
         """
-        Sends data to a given peer ID through the given channel.
+        Sends data to a given peer_id through the given channel.
         """
         data = (ctypes.c_uint8 * len(data))(*data)
         result = Result(self._internal.send_message(
-            self._internal, peerId, channelId, data, len(data)))
-        if result != Result.Ok:
-            raise getException(result)
+            self._internal,
+            peer_id,
+            channel_id,
+            data,
+            len(data)
+        ))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def CloseChannel(self, peerId: int, channelId: int) -> None:
+    def close_channel(self, peer_id: int, channel_id: int) -> None:
         """
-        Close the connection to a given user by peerId on the given channel.
+        Close the connection to a given user by peer_id on the given channel.
         """
-        result = Result(self._internal.close_channel(self._internal, peerId, channelId))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.close_channel(self._internal, peer_id, channel_id))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def ClosePeer(self, peerId: int) -> None:
+    def close_peer(self, peer_id: int) -> None:
         """
         Disconnects the network session to another Discord user.
         """
-        result = Result(self._internal.close_peer(self._internal, peerId))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.close_peer(self._internal, peer_id))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def OnMessage(self, peerId: int, channelId: int, data: bytes) -> None:
+    def on_message(self, peer_id: int, channel_id: int, data: bytes) -> None:
         """
         Fires when you receive data from another user.
         """
-        pass
 
-    def OnRouteUpdate(self, route: str) -> None:
+    def on_route_update(self, route: str) -> None:
         """
         Fires when your networking route has changed.
         """
-        pass

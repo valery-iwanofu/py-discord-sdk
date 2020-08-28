@@ -1,133 +1,136 @@
 import ctypes
-from typing import Callable
+import typing as t
 
 from . import sdk
 from .enum import Result
-from .event import bindEvents
-from .exception import getException
+from .event import bind_events
+from .exception import get_exception
 from .model import InputMode
 
 
 class VoiceManager:
+    _internal: sdk.IDiscordVoiceManager = None
+    _garbage: t.List[t.Any]
+    _events: sdk.IDiscordVoiceEvents
+
     def __init__(self):
-        self._internal = None
         self._garbage = []
-        self._events = bindEvents(
+        self._events = bind_events(
             sdk.IDiscordVoiceEvents,
-            self._OnSettingsUpdate
+            self._on_settings_update
         )
 
-    def _OnSettingsUpdate(self, event_data):
-        self.OnSettingsUpdate()
+    def _on_settings_update(self, event_data):
+        self.on_settings_update()
 
-    def GetInputMode(self) -> InputMode:
+    def get_input_mode(self) -> InputMode:
         """
         Get the current voice input mode for the user
         """
         input_mode = sdk.DiscordInputMode()
         result = Result(self._internal.get_input_mode(self._internal, input_mode))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
         return InputMode(internal=input_mode)
 
-    def SetInputMode(self, inputMode: InputMode, callback: Callable[[Result], None]) -> None:
+    def set_input_mode(self, inputMode: InputMode, callback: t.Callable[[Result], None]) -> None:
         """
         Sets a new voice input mode for the uesr.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.set_input_mode.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.set_input_mode.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
         self._internal.set_input_mode(
             self._internal,
             inputMode._internal,
             ctypes.c_void_p(),
-            CCallback
+            c_callback
         )
 
-    def IsSelfMute(self) -> bool:
+    def is_self_mute(self) -> bool:
         """
         Whether the connected user is currently muted.
         """
         mute = ctypes.c_bool()
         result = Result(self._internal.is_self_mute(self._internal, mute))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
         return mute.value
 
-    def SetSelfMute(self, mute: bool) -> None:
+    def set_self_mute(self, mute: bool) -> None:
         """
         Mutes or unmutes the currently connected user.
         """
         result = Result(self._internal.set_self_mute(self._internal, mute))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def IsSelfDeaf(self) -> bool:
+    def is_self_deaf(self) -> bool:
         """
         Whether the connected user is currently deafened.
         """
         deaf = ctypes.c_bool()
         result = Result(self._internal.is_self_deaf(self._internal, deaf))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
         return deaf.value
 
-    def SetSelfDeaf(self, deaf: bool) -> None:
+    def set_self_deaf(self, deaf: bool) -> None:
         """
         Deafens or undefeans the currently connected user.
         """
         result = Result(self._internal.set_self_deaf(self._internal, deaf))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def IsLocalMute(self, userId: int) -> bool:
+    def is_local_mute(self, user_id: int) -> bool:
         """
         Whether the given user is currently muted by the connected user.
         """
         mute = ctypes.c_bool()
-        result = Result(self._internal.is_local_mute(self._internal, userId, mute))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.is_local_mute(self._internal, user_id, mute))
+        if result != Result.ok:
+            raise get_exception(result)
 
         return mute.value
 
-    def SetLocalMute(self, userId: int, mute: bool) -> None:
+    def set_local_mute(self, user_id: int, mute: bool) -> None:
         """
         Mutes or unmutes the given user for the currently connected user.
         """
-        result = Result(self._internal.set_local_mute(self._internal, userId, mute))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.set_local_mute(self._internal, user_id, mute))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def GetLocalVolume(self, userId: int) -> int:
+    def get_local_volume(self, user_id: int) -> int:
         """
         Gets the local volume for a given user.
         """
         volume = ctypes.c_uint8()
-        result = Result(self._internal.get_local_volume(self._internal, userId, volume))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.get_local_volume(self._internal, user_id, volume))
+        if result != Result.ok:
+            raise get_exception(result)
 
         return volume.value
 
-    def SetLocalVolume(self, userId: int, volume: int) -> None:
+    def set_local_volume(self, user_id: int, volume: int) -> None:
         """
         Sets the local volume for a given user.
         """
-        result = Result(self._internal.set_local_volume(self._internal, userId, volume))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.set_local_volume(self._internal, user_id, volume))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def OnSettingsUpdate(self) -> None:
+    def on_settings_update(self) -> None:
         # This event is not documented anywhere (yet?)
         pass

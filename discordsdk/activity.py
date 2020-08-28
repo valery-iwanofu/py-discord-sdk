@@ -1,129 +1,136 @@
 import ctypes
-from typing import Callable
+import typing as t
 
 from . import sdk
 from .enum import ActivityActionType, ActivityJoinRequestReply, Result
-from .event import bindEvents
+from .event import bind_events
 from .model import Activity, User
 
 
 class ActivityManager:
+    _internal: sdk.IDiscordActivityManager = None
+    _garbage: t.List[t.Any]
+    _events: sdk.IDiscordActivityEvents
+
     def __init__(self):
-        self._internal = None
         self._garbage = []
-        self._events = bindEvents(
+        self._events = bind_events(
             sdk.IDiscordActivityEvents,
-            self._OnActivityJoin,
-            self._OnActivitySpectate,
-            self._OnActivityJoinRequest,
-            self._OnActivityInvite
+            self._on_activity_join,
+            self._on_activity_spectate,
+            self._on_activity_join_request,
+            self._on_activity_invite
         )
 
-    def _OnActivityJoin(self, event_data, secret):
-        self.OnActivityJoin(secret.decode("utf8"))
+    def _on_activity_join(self, event_data, secret):
+        self.on_activity_join(secret.decode("utf8"))
 
-    def _OnActivitySpectate(self, event_data, secret):
-        self.OnActivitySpectate(secret.decode("utf8"))
+    def _on_activity_spectate(self, event_data, secret):
+        self.on_activity_spectate(secret.decode("utf8"))
 
-    def _OnActivityJoinRequest(self, event_data, user):
-        self.OnActivityJoinRequest(User(copy=user.contents))
+    def _on_activity_join_request(self, event_data, user):
+        self.on_activity_join_request(User(copy=user.contents))
 
-    def _OnActivityInvite(self, event_data, type, user, activity):
-        self.OnActivityInvite(type, User(copy=user.contents), Activity(copy=activity.contents))
+    def _on_activity_invite(self, event_data, type, user, activity):
+        self.on_activity_invite(type, User(copy=user.contents), Activity(copy=activity.contents))
 
-    def RegisterCommand(self, command: str) -> Result:
+    def register_command(self, command: str) -> Result:
         """
         Registers a command by which Discord can launch your game.
         """
         result = Result(self._internal.register_command(self._internal, command.encode("utf8")))
         return result
 
-    def RegisterSteam(self, steamId: int) -> Result:
+    def register_steam(self, steamId: int) -> Result:
         """
         Registers your game's Steam app id for the protocol `steam://run-game-id/<id>`.
         """
         result = Result(self._internal.register_steam(self._internal, steamId))
         return result
 
-    def UpdateActivity(self, activity: Activity, callback: Callable[[Result], None]) -> None:
+    def update_activity(self, activity: Activity, callback: t.Callable[[Result], None]) -> None:
         """
         Set a user's presence in Discord to a new activity.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.update_activity.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.update_activity.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
         self._internal.update_activity(
-            self._internal, activity._internal, ctypes.c_void_p(), CCallback)
+            self._internal,
+            activity._internal,
+            ctypes.c_void_p(),
+            c_callback
+        )
 
-    def ClearActivity(self, callback: Callable[[Result], None]) -> None:
+    def clear_activity(self, callback: t.Callable[[Result], None]) -> None:
         """
         Clears a user's presence in Discord to make it show nothing.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.clear_activity.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.clear_activity.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.clear_activity(self._internal, ctypes.c_void_p(), CCallback)
+        self._internal.clear_activity(self._internal, ctypes.c_void_p(), c_callback)
 
-    def SendRequestReply(
+    def send_request_reply(
         self,
         userId: int,
         reply: ActivityJoinRequestReply,
-        callback: Callable[[Result], None]
+        callback: t.Callable[[Result], None]
     ) -> None:
         """
         Sends a reply to an Ask to Join request.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.send_request_reply.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.send_request_reply.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
         self._internal.send_request_reply(
             self._internal,
             userId,
             reply,
             ctypes.c_void_p(),
-            CCallback
+            c_callback
         )
 
-    def SendInvite(
+    def send_invite(
         self,
         userId: int,
         type: ActivityActionType,
         content: str,
-        callback: Callable[[Result], None]
+        callback: t.Callable[[Result], None]
     ) -> None:
         """
         Sends a game invite to a given user.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.send_invite.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.send_invite.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
         self._internal.send_invite(
             self._internal,
@@ -131,46 +138,42 @@ class ActivityManager:
             type,
             content.encode("utf8"),
             ctypes.c_void_p(),
-            CCallback
+            c_callback
         )
 
-    def AcceptInvite(self, userId: int, callback: Callable[[Result], None]) -> None:
+    def accept_invite(self, userId: int, callback: t.Callable[[Result], None]) -> None:
         """
         Accepts a game invitation from a given userId.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.accept_invite.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.accept_invite.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.accept_invite(self._internal, userId, ctypes.c_void_p(), CCallback)
+        self._internal.accept_invite(self._internal, userId, ctypes.c_void_p(), c_callback)
 
-    def OnActivityJoin(self, joinSecret: str) -> None:
+    def on_activity_join(self, joinSecret: str) -> None:
         """
         Fires when a user accepts a game chat invite or receives confirmation from Asking to Join.
         """
-        pass
 
-    def OnActivitySpectate(self, spectateSecret: str) -> None:
+    def on_activity_spectate(self, spectateSecret: str) -> None:
         """
         Fires when a user accepts a spectate chat invite or clicks the Spectate button on a user's
         profile.
         """
-        pass
 
-    def OnActivityJoinRequest(self, user: User) -> None:
+    def on_activity_join_request(self, user: User) -> None:
         """
         Fires when a user asks to join the current user's game.
         """
-        pass
 
-    def OnActivityInvite(self, type: ActivityActionType, user: User, activity: Activity) -> None:
+    def on_activity_invite(self, type: ActivityActionType, user: User, activity: Activity) -> None:
         """
         Fires when the user receives a join or spectate invite.
         """
-        pass

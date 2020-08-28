@@ -1,112 +1,118 @@
 import ctypes
-from typing import Callable, Optional
+import typing as t
 
 from . import sdk
 from .enum import (
     LobbySearchCast, LobbySearchComparison, LobbySearchDistance, LobbyType,
     Result)
-from .event import bindEvents
-from .exception import getException
+from .event import bind_events
+from .exception import get_exception
 from .model import Lobby, User
 
 
 class LobbyTransaction:
-    def __init__(self, internal):
+    _internal: sdk.IDiscordLobbyTransaction
+
+    def __init__(self, internal: sdk.IDiscordLobbyTransaction):
         self._internal = internal
 
-    def SetType(self, type: LobbyType) -> None:
+    def set_type(self, type: LobbyType) -> None:
         """
         Marks a lobby as private or public.
         """
         result = Result(self._internal.set_type(self._internal, type))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def SetOwner(self, userId: int) -> None:
+    def set_owner(self, user_id: int) -> None:
         """
         Sets a new owner for the lobby.
         """
-        result = Result(self._internal.set_owner(self._internal, userId))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.set_owner(self._internal, user_id))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def SetCapacity(self, capacity: int) -> None:
+    def set_capacity(self, capacity: int) -> None:
         """
         Sets a new capacity for the lobby.
         """
         result = Result(self._internal.set_capacity(self._internal, capacity))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def SetMetadata(self, key: str, value: str) -> None:
+    def set_metadata(self, key: str, value: str) -> None:
         """
         Sets metadata value under a given key name for the lobby.
         """
-        metadataKey = sdk.DiscordMetadataKey()
-        metadataKey.value = key.encode("utf8")
+        metadata_key = sdk.DiscordMetadataKey()
+        metadata_key.value = key.encode("utf8")
 
-        metadataValue = sdk.DiscordMetadataValue()
-        metadataValue.value = value.encode("utf8")
+        metadata_value = sdk.DiscordMetadataValue()
+        metadata_value.value = value.encode("utf8")
 
-        result = Result(self._internal.set_metadata(self._internal, metadataKey, metadataValue))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.set_metadata(self._internal, metadata_key, metadata_value))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def DeleteMetadata(self, key: str) -> None:
+    def delete_metadata(self, key: str) -> None:
         """
         Deletes the lobby metadata for a key.
         """
-        metadataKey = sdk.DiscordMetadataKey()
-        metadataKey.value = key.encode("utf8")
+        metadata_key = sdk.DiscordMetadataKey()
+        metadata_key.value = key.encode("utf8")
 
-        result = Result(self._internal.delete_metadata(self._internal, metadataKey))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.delete_metadata(self._internal, metadata_key))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def SetLocked(self, locked: bool) -> None:
+    def set_locked(self, locked: bool) -> None:
         """
         Sets the lobby to locked or unlocked.
         """
         result = Result(self._internal.set_locked(self._internal, locked))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
 
 class LobbyMemberTransaction:
-    def __init__(self, internal):
+    _internal: sdk.IDiscordLobbyMemberTransaction
+
+    def __init__(self, internal: sdk.IDiscordLobbyMemberTransaction):
         self._internal = internal
 
-    def SetMetadata(self, key: str, value: str) -> None:
+    def set_metadata(self, key: str, value: str) -> None:
         """
         Sets metadata value under a given key name for the current user.
         """
-        metadataKey = sdk.DiscordMetadataKey()
-        metadataKey.value = key.encode("utf8")
+        metadata_key = sdk.DiscordMetadataKey()
+        metadata_key.value = key.encode("utf8")
 
-        metadataValue = sdk.DiscordMetadataValue()
-        metadataValue.value = value.encode("utf8")
+        metadata_value = sdk.DiscordMetadataValue()
+        metadata_value.value = value.encode("utf8")
 
-        result = Result(self._internal.set_metadata(self._internal, metadataKey, metadataValue))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.set_metadata(self._internal, metadata_key, metadata_value))
+        if result != Result.ok:
+            raise get_exception(result)
 
     def DeleteMetadata(self, key: str) -> None:
         """
         Sets metadata value under a given key name for the current user.
         """
-        metadataKey = sdk.DiscordMetadataKey()
-        metadataKey.value = key.encode("utf8")
+        metadata_key = sdk.DiscordMetadataKey()
+        metadata_key.value = key.encode("utf8")
 
-        result = Result(self._internal.delete_metadata(self._internal, metadataKey))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.delete_metadata(self._internal, metadata_key))
+        if result != Result.ok:
+            raise get_exception(result)
 
 
 class LobbySearchQuery:
-    def __init__(self, internal):
+    _internal: sdk.IDiscordLobbySearchQuery
+
+    def __init__(self, internal: sdk.IDiscordLobbySearchQuery):
         self._internal = internal
 
-    def Filter(
+    def filter(
         self,
         key: str,
         comp: LobbySearchComparison,
@@ -116,385 +122,390 @@ class LobbySearchQuery:
         """
         Filters lobbies based on metadata comparison.
         """
-        metadataKey = sdk.DiscordMetadataKey()
-        metadataKey.value = key.encode("utf8")
+        metadata_key = sdk.DiscordMetadataKey()
+        metadata_key.value = key.encode("utf8")
 
-        metadataValue = sdk.DiscordMetadataValue()
-        metadataValue.value = value.encode("utf8")
+        metadata_value = sdk.DiscordMetadataValue()
+        metadata_value.value = value.encode("utf8")
 
         result = Result(self._internal.filter(
             self._internal,
-            metadataKey,
+            metadata_key,
             comp,
             cast,
-            metadataValue
+            metadata_value
         ))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def Sort(self, key: str, cast: LobbySearchCast, value: str) -> None:
+    def sort(self, key: str, cast: LobbySearchCast, value: str) -> None:
         """
         Sorts the filtered lobbies based on "near-ness" to a given value.
         """
-        metadataKey = sdk.DiscordMetadataKey()
-        metadataKey.value = key.encode("utf8")
+        metadata_key = sdk.DiscordMetadataKey()
+        metadata_key.value = key.encode("utf8")
 
-        metadataValue = sdk.DiscordMetadataValue()
-        metadataValue.value = value.encode("utf8")
+        metadata_value = sdk.DiscordMetadataValue()
+        metadata_value.value = value.encode("utf8")
 
-        result = Result(self._internal.sort(self._internal, metadataKey, cast, metadataValue))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.sort(self._internal, metadata_key, cast, metadata_value))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def Limit(self, limit: int) -> None:
+    def limit(self, limit: int) -> None:
         """
         Limits the number of lobbies returned in a search.
         """
         result = Result(self._internal.limit(self._internal, limit))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def Distance(self, distance: LobbySearchDistance) -> None:
+    def distance(self, distance: LobbySearchDistance) -> None:
         """
         Filters lobby results to within certain regions relative to the user's location.
         """
         result = Result(self._internal.distance(self._internal, distance))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
 
 class LobbyManager:
+    _internal: sdk.IDiscordLobbyManager = None
+    _garbage: t.List[t.Any]
+    _events: sdk.IDiscordLobbyEvents
+
     def __init__(self):
-        self._internal = None
         self._garbage = []
-        self._events = bindEvents(
+        self._events = bind_events(
             sdk.IDiscordLobbyEvents,
-            self._OnLobbyUpdate,
-            self._OnLobbyDelete,
-            self._OnMemberConnect,
-            self._OnMemberUpdate,
-            self._OnMemberDisconnect,
-            self._OnLobbyMessage,
-            self._OnSpeaking,
-            self._OnNetworkMessage
+            self._on_lobby_update,
+            self._on_lobby_delete,
+            self._on_member_connet,
+            self._on_member_update,
+            self._on_member_disconnect,
+            self._on_lobby_message,
+            self._on_speaking,
+            self._on_network_message
         )
 
-    def _OnLobbyUpdate(self, event_data, lobby_id):
-        self.OnLobbyUpdate(lobby_id)
+    def _on_lobby_update(self, event_data, lobby_id):
+        self.on_lobby_update(lobby_id)
 
-    def _OnLobbyDelete(self, event_data, lobby_id, reason):
-        self.OnLobbyDelete(lobby_id, reason)
+    def _on_lobby_delete(self, event_data, lobby_id, reason):
+        self.on_lobby_delete(lobby_id, reason)
 
-    def _OnMemberConnect(self, event_data, lobby_id, user_id):
-        self.OnMemberConnect(lobby_id, user_id)
+    def _on_member_connet(self, event_data, lobby_id, user_id):
+        self.on_member_connect(lobby_id, user_id)
 
-    def _OnMemberUpdate(self, event_data, lobby_id, user_id):
-        self.OnMemberUpdate(lobby_id, user_id)
+    def _on_member_update(self, event_data, lobby_id, user_id):
+        self.on_member_update(lobby_id, user_id)
 
-    def _OnMemberDisconnect(self, event_data, lobby_id, user_id):
-        self.OnMemberDisconnect(lobby_id, user_id)
+    def _on_member_disconnect(self, event_data, lobby_id, user_id):
+        self.on_member_disconnect(lobby_id, user_id)
 
-    def _OnLobbyMessage(self, event_data, lobby_id, user_id, data, data_length):
+    def _on_lobby_message(self, event_data, lobby_id, user_id, data, data_length):
         message = bytes(data[:data_length]).decode("utf8")
-        self.OnLobbyMessage(lobby_id, user_id, message)
+        self.on_lobby_message(lobby_id, user_id, message)
 
-    def _OnSpeaking(self, event_data, lobby_id, user_id, speaking):
-        self.OnSpeaking(lobby_id, user_id, speaking)
+    def _on_speaking(self, event_data, lobby_id, user_id, speaking):
+        self.on_speaking(lobby_id, user_id, speaking)
 
-    def _OnNetworkMessage(self, event_data, lobby_id, user_id, channel_id, data, data_length):
+    def _on_network_message(self, event_data, lobby_id, user_id, channel_id, data, data_length):
         data = bytes(data[:data_length])
-        self.OnNetworkMessage(lobby_id, user_id, channel_id, data)
+        self.on_network_message(lobby_id, user_id, channel_id, data)
 
-    def GetLobbyCreateTransaction(self) -> LobbyTransaction:
+    def get_lobby_create_transaction(self) -> LobbyTransaction:
         """
         Gets a Lobby transaction used for creating a new lobby
         """
         transaction = ctypes.POINTER(sdk.IDiscordLobbyTransaction)()
         result = Result(self._internal.get_lobby_create_transaction(self._internal, transaction))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
         return LobbyTransaction(internal=transaction.contents)
 
-    def GetLobbyUpdateTransaction(self, lobbyId: int) -> LobbyTransaction:
+    def get_lobby_update_transaction(self, lobby_id: int) -> LobbyTransaction:
         """
         Gets a lobby transaction used for updating an existing lobby.
         """
         transaction = ctypes.POINTER(sdk.IDiscordLobbyTransaction)()
         result = Result(self._internal.get_lobby_update_transaction(
-            self._internal, lobbyId, transaction))
-        if result != Result.Ok:
-            raise getException(result)
+            self._internal,
+            lobby_id,
+            transaction
+        ))
+        if result != Result.ok:
+            raise get_exception(result)
 
         return LobbyTransaction(internal=transaction.contents)
 
-    def GetMemberUpdateTransaction(self, lobbyId: int, userId: int) -> LobbyMemberTransaction:
+    def get_member_update_transaction(self, lobby_id: int, user_id: int) -> LobbyMemberTransaction:
         """
         Gets a new member transaction for a lobby member in a given lobby.
         """
         transaction = ctypes.POINTER(sdk.IDiscordLobbyMemberTransaction)()
         result = Result(self._internal.get_member_update_transaction(
-            self._internal, lobbyId, userId, transaction))
-        if result != Result.Ok:
-            raise getException(result)
+            self._internal, lobby_id, user_id, transaction))
+        if result != Result.ok:
+            raise get_exception(result)
 
         return LobbyMemberTransaction(internal=transaction.contents)
 
-    def CreateLobby(
+    def create_lobby(
         self,
-        transaction:
-        LobbyTransaction,
-        callback: Callable[[Result, Optional[Lobby]], None]
+        transaction: LobbyTransaction,
+        callback: t.Callable[[Result, t.Optional[Lobby]], None]
     ) -> None:
         """
         Creates a lobby.
 
-        Returns discord.enum.Result (int) and Lobby via callback.
+        Returns discordsdk.enum.Result (int) and Lobby via callback.
         """
-        def CCallback(callback_data, result, lobby):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result, lobby):
+            self._garbage.remove(c_callback)
             result = Result(result)
-            if result == Result.Ok:
+            if result == Result.ok:
                 callback(result, Lobby(copy=lobby.contents))
             else:
                 callback(result, None)
 
-        CCallback = self._internal.create_lobby.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.create_lobby.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
         self._internal.create_lobby(
             self._internal,
             transaction._internal,
             ctypes.c_void_p(),
-            CCallback
+            c_callback
         )
 
-    def UpdateLobby(
+    def update_lobby(
         self,
-        lobbyId: int,
+        lobby_id: int,
         transaction: LobbyTransaction,
-        callback: Callable[[Result], None]
+        callback: t.Callable[[Result], None]
     ) -> None:
         """
         Updates a lobby with data from the given transaction.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.update_lobby.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.update_lobby.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
         self._internal.update_lobby(
             self._internal,
-            lobbyId,
+            lobby_id,
             transaction._internal,
             ctypes.c_void_p(),
-            CCallback
+            c_callback
         )
 
-    def DeleteLobby(self, lobbyId: int, callback: Callable[[Result], None]) -> None:
+    def delete_lobby(self, lobby_id: int, callback: t.Callable[[Result], None]) -> None:
         """
         Deletes a given lobby.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.delete_lobby.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.delete_lobby.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.delete_lobby(self._internal, lobbyId, ctypes.c_void_p(), CCallback)
+        self._internal.delete_lobby(self._internal, lobby_id, ctypes.c_void_p(), c_callback)
 
-    def ConnectLobby(
+    def connect_lobby(
         self,
-        lobbyId: int,
-        lobbySecret: str,
-        callback: Callable[[Result], None]
+        lobby_id: int,
+        lobby_secret: str,
+        callback: t.Callable[[Result], None]
     ) -> None:
         """
         Connects the current user to a given lobby.
         """
-        def CCallback(callback_data, result, lobby):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result, lobby):
+            self._garbage.remove(c_callback)
             result = Result(result)
-            if result == Result.Ok:
+            if result == Result.ok:
                 callback(result, Lobby(copy=lobby.contents))
             else:
                 callback(result, None)
 
-        CCallback = self._internal.connect_lobby.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.connect_lobby.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        _lobbySecret = sdk.DiscordLobbySecret()
-        _lobbySecret.value = lobbySecret.encode("utf8")
+        _lobby_secret = sdk.DiscordLobbySecret()
+        _lobby_secret.value = lobby_secret.encode("utf8")
 
         self._internal.connect_lobby(
             self._internal,
-            lobbyId,
-            _lobbySecret,
+            lobby_id,
+            _lobby_secret,
             ctypes.c_void_p(),
-            CCallback
+            c_callback
         )
 
-    def ConnectLobbyWithActivitySecret(
+    def connect_lobby_with_activity_secret(
         self,
-        activitySecret: str,
-        callback: Callable[[Result, Optional[Lobby]], None]
+        activity_secret: str,
+        callback: t.Callable[[Result, t.Optional[Lobby]], None]
     ) -> None:
         """
         Connects the current user to a lobby; requires the special activity secret from the lobby
-        which is a concatenated lobbyId and secret.
+        which is a concatenated lobby_id and secret.
         """
-        def CCallback(callback_data, result, lobby):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result, lobby):
+            self._garbage.remove(c_callback)
             result = Result(result)
-            if result == Result.Ok:
+            if result == Result.ok:
                 callback(result, Lobby(copy=lobby.contents))
             else:
                 callback(result, None)
 
-        CCallback = self._internal.connect_lobby_with_activity_secret.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.connect_lobby_with_activity_secret.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        _activitySecret = sdk.DiscordLobbySecret()
-        _activitySecret.value = activitySecret.encode("utf8")
+        _activity_secret = sdk.DiscordLobbySecret()
+        _activity_secret.value = activity_secret.encode("utf8")
 
         self._internal.connect_lobby_with_activity_secret(
             self._internal,
-            _activitySecret,
+            _activity_secret,
             ctypes.c_void_p(),
-            CCallback
+            c_callback
         )
 
-    def GetLobbyActivitySecret(self, lobbyId: int) -> str:
+    def get_lobby_activity_secret(self, lobby_id: int) -> str:
         """
         Gets the special activity secret for a given lobby.
         """
-        lobbySecret = sdk.DiscordLobbySecret()
+        lobby_secret = sdk.DiscordLobbySecret()
 
-        result = self._internal.get_lobby_activity_secret(self._internal, lobbyId, lobbySecret)
-        if result != result.Ok:
-            raise getException(result)
+        result = self._internal.get_lobby_activity_secret(self._internal, lobby_id, lobby_secret)
+        if result != result.ok:
+            raise get_exception(result)
 
-        return lobbySecret.value.decode("utf8")
+        return lobby_secret.value.decode("utf8")
 
-    def DisconnectLobby(self, lobbyId: int, callback: Callable[[Result], None]) -> None:
+    def disconnect_lobby(self, lobby_id: int, callback: t.Callable[[Result], None]) -> None:
         """
         Disconnects the current user from a lobby.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.disconnect_lobby.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.disconnect_lobby.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.disconnect_lobby(self._internal, lobbyId, ctypes.c_void_p(), CCallback)
+        self._internal.disconnect_lobby(self._internal, lobby_id, ctypes.c_void_p(), c_callback)
 
-    def GetLobby(self, lobbyId: int) -> Lobby:
+    def get_lobby(self, lobby_id: int) -> Lobby:
         """
         Gets the lobby object for a given lobby id.
         """
         lobby = sdk.DiscordLobby()
 
-        result = Result(self._internal.get_lobby(self._internal, lobbyId, lobby))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.get_lobby(self._internal, lobby_id, lobby))
+        if result != Result.ok:
+            raise get_exception(result)
 
         return Lobby(internal=lobby)
 
-    def LobbyMetadataCount(self, lobbyId: int) -> int:
+    def lobby_metadata_count(self, lobby_id: int) -> int:
         """
         Returns the number of metadata key/value pairs on a given lobby.
         """
         count = sdk.c_int32()
 
-        result = Result(self._internal.lobby_metadata_count(self._internal, lobbyId, count))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.lobby_metadata_count(self._internal, lobby_id, count))
+        if result != Result.ok:
+            raise get_exception(result)
 
         return count.value
 
-    def GetLobbyMetadataKey(self, lobbyId: int, index: int) -> str:
+    def get_lobby_metadata_key(self, lobby_id: int, index: int) -> str:
         """
         Returns the key for the lobby metadata at the given index.
         """
-        metadataKey = sdk.DiscordMetadataKey()
+        metadata_key = sdk.DiscordMetadataKey()
 
         result = Result(self._internal.get_lobby_metadata_key(
             self._internal,
-            lobbyId,
+            lobby_id,
             index,
-            metadataKey
+            metadata_key
         ))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
-        return metadataKey.value.decode("utf8")
+        return metadata_key.value.decode("utf8")
 
-    def GetLobbyMetadataValue(self, lobbyId: int, key: str) -> str:
+    def get_lobby_metadata_value(self, lobby_id: int, key: str) -> str:
         """
         Returns lobby metadata value for a given key and id.
         """
-        metadataKey = sdk.DiscordMetadataKey()
-        metadataKey.value = key.encode("utf8")
+        metadata_key = sdk.DiscordMetadataKey()
+        metadata_key.value = key.encode("utf8")
 
-        metadataValue = sdk.DiscordMetadataValue()
+        metadata_value = sdk.DiscordMetadataValue()
 
         result = Result(self._internal.get_lobby_metadata_value(
             self._internal,
-            lobbyId,
-            metadataKey,
-            metadataValue
+            lobby_id,
+            metadata_key,
+            metadata_value
         ))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
-        return metadataValue.value.decode("utf8")
+        return metadata_value.value.decode("utf8")
 
-    def MemberCount(self, lobbyId: int) -> int:
+    def member_count(self, lobby_id: int) -> int:
         """
         Get the number of members in a lobby.
         """
         count = sdk.c_int32()
 
-        result = Result(self._internal.member_count(self._internal, lobbyId, count))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.member_count(self._internal, lobby_id, count))
+        if result != Result.ok:
+            raise get_exception(result)
 
         return count.value
 
-    def GetMemberUserId(self, lobbyId: int, index: int) -> int:
+    def get_member_user_id(self, lobby_id: int, index: int) -> int:
         """
         Gets the user id of the lobby member at the given index.
         """
-        userId = sdk.DiscordUserId()
+        user_id = sdk.DiscordUserId()
 
-        result = Result(self._internal.get_member_user_id(self._internal, lobbyId, index, userId))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.get_member_user_id(self._internal, lobby_id, index, user_id))
+        if result != Result.ok:
+            raise get_exception(result)
 
-        return userId.value
+        return user_id.value
 
-    def GetMemberUser(self, lobbyId: int, userId: int) -> User:
+    def get_member_user(self, lobby_id: int, user_id: int) -> User:
         """
         Gets the user object for a given user id.
         """
         user = sdk.DiscordUser()
 
-        result = Result(self._internal.get_member_user(self._internal, lobbyId, userId, user))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.get_member_user(self._internal, lobby_id, user_id, user))
+        if result != Result.ok:
+            raise get_exception(result)
 
         return User(internal=user)
 
-    def MemberMetadataCount(self, lobbyId: int, userId: int) -> int:
+    def member_metadata_count(self, lobby_id: int, user_id: int) -> int:
         """
         Gets the number of metadata key/value pairs for the given lobby member.
         """
@@ -502,135 +513,140 @@ class LobbyManager:
 
         result = Result(self._internal.member_metadata_count(
             self._internal,
-            lobbyId,
-            userId,
+            lobby_id,
+            user_id,
             count
         ))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
         return count.value
 
-    def GetMemberMetadataKey(self, lobbyId: int, userId: int, index: int) -> str:
+    def get_member_metadata_key(self, lobby_id: int, user_id: int, index: int) -> str:
         """
         Gets the key for the lobby metadata at the given index on a lobby member.
         """
-        metadataKey = sdk.DiscordMetadataKey()
+        metadata_key = sdk.DiscordMetadataKey()
 
         result = Result(self._internal.get_member_metadata_key(
             self._internal,
-            lobbyId,
-            userId,
+            lobby_id,
+            user_id,
             index,
-            metadataKey
+            metadata_key
         ))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
-        return metadataKey.value.decode("utf8")
+        return metadata_key.value.decode("utf8")
 
-    def GetMemberMetadataValue(self, lobbyId: int, userId: int, key: str) -> str:
+    def get_member_metadata_value(self, lobby_id: int, user_id: int, key: str) -> str:
         """
         Returns user metadata for a given key.
         """
-        metadataKey = sdk.DiscordMetadataKey()
-        metadataKey.value = key.encode("utf8")
+        metadata_key = sdk.DiscordMetadataKey()
+        metadata_key.value = key.encode("utf8")
 
-        metadataValue = sdk.DiscordMetadataValue()
+        metadata_value = sdk.DiscordMetadataValue()
 
         result = Result(self._internal.get_member_metadata_value(
             self._internal,
-            lobbyId,
-            userId,
-            metadataKey,
-            metadataValue
+            lobby_id,
+            user_id,
+            metadata_key,
+            metadata_value
         ))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
-        return metadataValue.value.decode("utf8")
+        return metadata_value.value.decode("utf8")
 
-    def UpdateMember(
+    def update_member(
         self,
-        lobbyId: int,
-        userId: int,
+        lobby_id: int,
+        user_id: int,
         transaction: LobbyMemberTransaction,
-        callback: Callable[[Result], None]
+        callback: t.Callable[[Result], None]
     ) -> None:
         """
         Updates lobby member info for a given member of the lobby.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.update_member.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.update_member.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
         self._internal.update_member(
             self._internal,
-            lobbyId,
-            userId,
+            lobby_id,
+            user_id,
             transaction._internal,
             ctypes.c_void_p(),
-            CCallback
+            c_callback
         )
 
-    def SendLobbyMessage(self, lobbyId: int, data: str, callback: Callable[[Result], None]) -> None:
+    def send_lobby_message(
+        self,
+        lobby_id: int,
+        data: str,
+        callback: t.Callable[[Result], None]
+    ) -> None:
         """
         Sends a message to the lobby on behalf of the current user.
 
-        Returns Discord.result (int) via callback.
+        Returns discordsdk.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.send_lobby_message.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.send_lobby_message.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
         data = data.encode("utf8")
         data = (ctypes.c_uint8 * len(data))(*data)
         self._internal.send_lobby_message(
-            self._internal, lobbyId, data, len(data), ctypes.c_void_p(), CCallback)
+            self._internal, lobby_id, data, len(data), ctypes.c_void_p(), c_callback)
 
-    def GetSearchQuery(self) -> LobbySearchQuery:
+    def get_search_query(self) -> LobbySearchQuery:
         """
         Creates a search object to search available lobbies.
         """
         search_query = (ctypes.POINTER(sdk.IDiscordLobbySearchQuery))()
         result = Result(self._internal.get_search_query(self._internal, ctypes.byref(search_query)))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
         return LobbySearchQuery(internal=search_query.contents)
 
-    def Search(self, search: LobbySearchQuery, callback: Callable[[Result], None]) -> None:
+    def search(self, search: LobbySearchQuery, callback: t.Callable[[Result], None]) -> None:
         """
         Searches available lobbies based on the search criteria chosen in the LobbySearchQuery
         member functions.
 
         Lobbies that meet the criteria are then globally filtered, and can be accessed via
-        iteration with LobbyCount() and GetLobbyId(). The callback fires when the list of lobbies
+        iteration with lobby_count() and get_lobby_id(). The callback fires when the list of lobbies
         is stable and ready for iteration.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.search.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.search.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.search(self._internal, search._internal, ctypes.c_void_p(), CCallback)
+        self._internal.search(self._internal, search._internal, ctypes.c_void_p(), c_callback)
 
-    def LobbyCount(self) -> int:
+    def lobby_count(self) -> int:
         """
         Get the number of lobbies that match the search.
         """
@@ -638,140 +654,148 @@ class LobbyManager:
         self._internal.lobby_count(self._internal, count)
         return count.value
 
-    def GetLobbyId(self, index: int) -> int:
+    def get_lobby_id(self, index: int) -> int:
         """
         Returns the id for the lobby at the given index.
         """
 
-        lobbyId = sdk.DiscordLobbyId()
+        lobby_id = sdk.DiscordLobbyId()
 
-        result = Result(self._internal.get_lobby_id(self._internal, index, lobbyId))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.get_lobby_id(self._internal, index, lobby_id))
+        if result != Result.ok:
+            raise get_exception(result)
 
-        return lobbyId.value
+        return lobby_id.value
 
-    def ConnectVoice(self, lobbyId: int, callback: Callable[[Result], None]) -> None:
+    def connect_voice(self, lobby_id: int, callback: t.Callable[[Result], None]) -> None:
         """
         Connects to the voice channel of the current lobby.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.connect_voice.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.connect_voice.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.connect_voice(self._internal, lobbyId, ctypes.c_void_p(), CCallback)
+        self._internal.connect_voice(self._internal, lobby_id, ctypes.c_void_p(), c_callback)
 
-    def DisconnectVoice(self, lobbyId: int, callback: Callable[[Result], None]) -> None:
+    def disconnect_voice(self, lobby_id: int, callback: t.Callable[[Result], None]) -> None:
         """
         Disconnects from the voice channel of a given lobby.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.disconnect_voice.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.disconnect_voice.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.disconnect_voice(self._internal, lobbyId, ctypes.c_void_p(), CCallback)
+        self._internal.disconnect_voice(self._internal, lobby_id, ctypes.c_void_p(), c_callback)
 
-    def OnLobbyUpdate(self, lobbyId: int) -> None:
+    def on_lobby_update(self, lobby_id: int) -> None:
         """
         Fires when a lobby is updated.
         """
-        pass
 
-    def OnLobbyDelete(self, lobbyId: int, reason: str) -> None:
+    def on_lobby_delete(self, lobby_id: int, reason: str) -> None:
         """
         Fired when a lobby is deleted.
         """
-        pass
 
-    def OnMemberConnect(self, lobbyId: int, userId: int) -> None:
+    def on_member_connect(self, lobby_id: int, user_id: int) -> None:
         """
         Fires when a new member joins the lobby.
         """
-        pass
 
-    def OnMemberUpdate(self, lobbyId: int, userId: int) -> None:
+    def on_member_update(self, lobby_id: int, user_id: int) -> None:
         """
         Fires when data for a lobby member is updated.
         """
-        pass
 
-    def OnMemberDisconnect(self, lobbyId: int, userId: int) -> None:
+    def on_member_disconnect(self, lobby_id: int, user_id: int) -> None:
         """
         Fires when a member leaves the lobby.
         """
-        pass
 
-    def OnLobbyMessage(self, lobbyId: int, userId: int, message: str) -> None:
+    def on_lobby_message(self, lobby_id: int, user_id: int, message: str) -> None:
         """
         Fires when a message is sent to the lobby.
         """
-        pass
 
-    def OnSpeaking(self, lobbyId: int, userId: int, speaking: bool) -> None:
+    def on_speaking(self, lobby_id: int, user_id: int, speaking: bool) -> None:
         """
         Fires when a user connected to voice starts or stops speaking.
         """
-        pass
 
-    def ConnectNetwork(self, lobbyId: int) -> None:
+    def connect_network(self, lobby_id: int) -> None:
         """
         Connects to the networking layer for the given lobby ID.
         """
-        result = Result(self._internal.connect_network(self._internal, lobbyId))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.connect_network(self._internal, lobby_id))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def DisconnectNetwork(self, lobbyId: int) -> None:
+    def disconnect_network(self, lobby_id: int) -> None:
         """
         Disconnects from the networking layer for the given lobby ID.
         """
-        result = Result(self._internal.disconnect_network(self._internal, lobbyId))
-        if result != Result.Ok:
-            raise getException(result)
+        result = Result(self._internal.disconnect_network(self._internal, lobby_id))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def FlushNetwork(self) -> None:
+    def flush_network(self) -> None:
         """
         Flushes the network. Call this when you're done sending messages.
         """
         result = Result(self._internal.flush_network(self._internal))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def OpenNetworkChannel(self, lobbyId: int, channelId: int, reliable: bool) -> None:
+    def open_network_channel(self, lobby_id: int, channel_id: int, reliable: bool) -> None:
         """
         Opens a network channel to all users in a lobby on the given channel number. No need to
         iterate over everyone!
         """
         result = Result(self._internal.open_network_channel(
-            self._internal, lobbyId, channelId, reliable))
-        if result != Result.Ok:
-            raise getException(result)
+            self._internal,
+            lobby_id,
+            channel_id,
+            reliable
+        ))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def SendNetworkMessage(self, lobbyId: int, userId: int, channelId: int, data: bytes) -> None:
+    def send_network_message(
+        self,
+        lobby_id: int,
+        user_id: int,
+        channel_id: int,
+        data: bytes
+    ) -> None:
         """
         Sends a network message to the given user ID that is a member of the given lobby ID over
         the given channel ID.
         """
         data = (ctypes.c_uint8 * len(data))(*data)
         result = Result(self._internal.send_network_message(
-            self._internal, lobbyId, userId, channelId, data, len(data)))
-        if result != Result.Ok:
-            raise getException(result)
+            self._internal,
+            lobby_id,
+            user_id,
+            channel_id,
+            data,
+            len(data)
+        ))
+        if result != Result.ok:
+            raise get_exception(result)
 
-    def OnNetworkMessage(self, lobbyId: int, userId: int, channelId: int, data: bytes) -> None:
+    def on_network_message(self, lobby_id: int, user_id: int, channel_id: int, data: bytes) -> None:
         """
         Fires when the user receives a message from the lobby's networking layer.
         """
-        pass

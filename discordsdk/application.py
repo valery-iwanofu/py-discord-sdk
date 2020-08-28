@@ -1,26 +1,20 @@
 import ctypes
-from typing import Callable, Optional
+import typing as t
 
 from . import sdk
 from .enum import Result
 from .model import OAuth2Token
 
 
-class SignedAppTicket:
-    def __init__(self):
-        self.application_id = None
-        self.user = None
-        self.entitlements = None
-        self.timestamp = None
-
-
 class ApplicationManager:
-    def __init__(self):
-        self._internal = None
-        self._garbage = []
-        self._events = None
+    _internal: sdk.IDiscordApplicationManager = None
+    _garbage: t.List[t.Any]
+    _events: sdk.IDiscordApplicationEvents = None
 
-    def GetCurrentLocale(self) -> str:
+    def __init__(self):
+        self._garbage = []
+
+    def get_current_locale(self) -> str:
         """
         Get the locale the current user has Discord set to.
         """
@@ -28,7 +22,7 @@ class ApplicationManager:
         self._internal.get_current_locale(self._internal, locale)
         return locale.value.decode("utf8")
 
-    def GetCurrentBranch(self) -> str:
+    def get_current_branch(self) -> str:
         """
         Get the name of pushed branch on which the game is running.
         """
@@ -36,53 +30,56 @@ class ApplicationManager:
         self._internal.get_current_branch(self._internal, branch)
         return branch.value.decode("utf8")
 
-    def GetOAuth2Token(self, callback: Callable[[Result, Optional[OAuth2Token]], None]) -> None:
+    def get_oauth2_token(
+        self,
+        callback: t.Callable[[Result, t.Optional[OAuth2Token]], None]
+    ) -> None:
         """
         Retrieve an oauth2 bearer token for the current user.
 
-        Returns discord.enum.Result (int) and OAuth2Token (str) via callback.
+        Returns discordsdk.enum.Result (int) and OAuth2Token (str) via callback.
         """
-        def CCallback(callback_data, result, oauth2_token):
-            self._garbage.remove(CCallback)
-            if result == Result.Ok:
+        def c_callback(callback_data, result, oauth2_token):
+            self._garbage.remove(c_callback)
+            if result == Result.ok:
                 callback(result, OAuth2Token(copy=oauth2_token.contents))
             else:
                 callback(result, None)
 
-        CCallback = self._internal.get_oauth2_token.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.get_oauth2_token.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.get_oauth2_token(self._internal, ctypes.c_void_p(), CCallback)
+        self._internal.get_oauth2_token(self._internal, ctypes.c_void_p(), c_callback)
 
-    def ValidateOrExit(self, callback: Callable[[Result], None]) -> None:
+    def validate_or_exit(self, callback: t.Callable[[Result], None]) -> None:
         """
         Checks if the current user has the entitlement to run this game.
 
-        Returns discord.enum.Result (int) via callback.
+        Returns discordsdk.enum.Result (int) via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             callback(result)
 
-        CCallback = self._internal.validate_or_exit.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.validate_or_exit.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.validate_or_exit(self._internal, ctypes.c_void_p(), CCallback)
+        self._internal.validate_or_exit(self._internal, ctypes.c_void_p(), c_callback)
 
-    def GetTicket(self, callback: Callable[[Result, Optional[str]], None]) -> None:
+    def get_ticket(self, callback: t.Callable[[Result, t.Optional[str]], None]) -> None:
         """
         Get the signed app ticket for the current user.
 
-        Returns discord.Enum.Result (int) and str via callback.
+        Returns discordsdk.Enum.Result (int) and str via callback.
         """
-        def CCallback(callback_data, result, data):
-            self._garbage.remove(CCallback)
-            if result == Result.Ok:
+        def c_callback(callback_data, result, data):
+            self._garbage.remove(c_callback)
+            if result == Result.ok:
                 callback(result, data.contents.value.decode("utf8"))
             else:
                 callback(result, None)
 
-        CCallback = self._internal.get_ticket.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.get_ticket.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.get_ticket(self._internal, ctypes.c_void_p(), CCallback)
+        self._internal.get_ticket(self._internal, ctypes.c_void_p(), c_callback)

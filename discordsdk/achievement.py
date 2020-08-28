@@ -1,69 +1,72 @@
 import ctypes
-from typing import Callable
+import typing as t
 
 from . import sdk
 from .enum import Result
-from .event import bindEvents
-from .exception import getException
+from .event import bind_events
+from .exception import get_exception
 from .model import UserAchievement
 
 
 class AchievementManager:
+    _internal: sdk.IDiscordAchievementManager = None
+    _garbage: t.List[t.Any]
+    _events: sdk.IDiscordAchievementEvents
+
     def __init__(self):
-        self._internal = None
         self._garbage = []
-        self._events = bindEvents(
+        self._events = bind_events(
             sdk.IDiscordAchievementEvents,
-            self._OnUserAchievementUpdate
+            self._on_user_achievement_update
         )
 
-    def _OnUserAchievementUpdate(self, event_data, user_achievement):
-        self.OnUserAchievementUpdate(UserAchievement(copy=user_achievement.contents))
+    def _on_user_achievement_update(self, event_data, user_achievement):
+        self.on_user_achievement_update(UserAchievement(copy=user_achievement.contents))
 
-    def SetUserAchievement(
+    def set_user_achievement(
         self,
         achievementId: int,
         percentComplete: int,
-        callback: Callable[[Result], None]
+        callback: t.Callable[[Result], None]
     ) -> None:
         """
         Updates the current user's status for a given achievement.
 
-        Returns discord.enum.Result via callback.
+        Returns discordsdk.enum.Result via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.set_user_achievement.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.set_user_achievement.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
         self._internal.set_user_achievement(
             self._internal,
             achievementId,
             percentComplete,
             ctypes.c_void_p(),
-            CCallback
+            c_callback
         )
 
-    def FetchUserAchievements(self, callback: Callable[[Result], None]) -> None:
+    def fetch_user_achievements(self, callback: t.Callable[[Result], None]) -> None:
         """
         Loads a stable list of the current user's achievements to iterate over.
 
-        Returns discord.enum.Result via callback.
+        Returns discordsdk.enum.Result via callback.
         """
-        def CCallback(callback_data, result):
-            self._garbage.remove(CCallback)
+        def c_callback(callback_data, result):
+            self._garbage.remove(c_callback)
             result = Result(result)
             callback(result)
 
-        CCallback = self._internal.fetch_user_achievements.argtypes[-1](CCallback)
-        self._garbage.append(CCallback)  # prevent it from being garbage collected
+        c_callback = self._internal.fetch_user_achievements.argtypes[-1](c_callback)
+        self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.fetch_user_achievements(self._internal, ctypes.c_void_p(), CCallback)
+        self._internal.fetch_user_achievements(self._internal, ctypes.c_void_p(), c_callback)
 
-    def CountUserAchievements(self) -> int:
+    def count_user_achievements(self) -> int:
         """
         Counts the list of a user's achievements for iteration.
         """
@@ -71,7 +74,7 @@ class AchievementManager:
         self._internal.count_user_achievements(self._internal, count)
         return count.value
 
-    def GetUserAchievementAt(self, index: int) -> UserAchievement:
+    def get_user_achievement_at(self, index: int) -> UserAchievement:
         """
         Gets the user's achievement at a given index of their list of achievements.
         """
@@ -81,12 +84,12 @@ class AchievementManager:
             index,
             achievement
         ))
-        if result != Result.Ok:
-            raise getException(result)
+        if resuok != Result.ok:
+            raise get_exception(result)
 
         return UserAchievement(internal=achievement)
 
-    def GetUserAchievement(self, achievementId: int) -> None:
+    def get_user_achievement(self, achievementId: int) -> None:
         """
         Gets the user achievement for the given achievement id.
         """
@@ -96,13 +99,12 @@ class AchievementManager:
             achievementId,
             achievement
         ))
-        if result != Result.Ok:
-            raise getException(result)
+        if result != Result.ok:
+            raise get_exception(result)
 
         return UserAchievement(internal=achievement)
 
-    def OnUserAchievementUpdate(self, achievement: UserAchievement) -> None:
+    def on_user_achievement_update(self, achievement: UserAchievement) -> None:
         """
         Fires when an achievement is updated for the currently connected user
         """
-        pass

@@ -7,95 +7,101 @@ import time
 import discordsdk as dsdk
 
 
-class Game:
-    # We will set it dynamically
-    ApplicationId = None
-
-    def __init__(self, instanceId):
-        self.instanceId = instanceId
-        os.environ["DISCORD_INSTANCE_ID"] = str(self.instanceId)
-
-        self.discord = dsdk.Discord(Game.ApplicationId, dsdk.CreateFlags.Default)
-
-        self.networkManager = self.discord.GetNetworkManager()
-        self.networkManager.OnRouteUpdate = self.onRouteUpdate
-        self.networkManager.OnMessage = self.onMessage
-
-        self.peerId = self.networkManager.GetPeerId()
-        self.route = None
-        self.connected = False
-
-    def onRouteUpdate(self, route):
-        self.route = route
-        print(f"[Discord {self.instanceId}] Route: {self.route}")
-
-        self.onRoute()
-
-    def onMessage(self, peerId, channelId, data):
-        print(f"[Discord {self.instanceId}] Received from {peerId} on channel {channelId}: {repr(data)}")  # noqa: E501
-
-
 # We get the Application Id
 with open("application_id.txt", "r") as file:
-    Game.ApplicationId = int(file.read())
+    application_id = int(file.read())
+
+
+class Game:
+    network_manager: dsdk.NetworkManager
+    route: dsdk.NetworkManager = None
+    instance_id: int
+    peer_id: int
+    connected: bool = False
+
+    def __init__(self, instance_id):
+        self.instance_id = instance_id
+        os.environ["DISCORD_INSTANCE_ID"] = str(self.instance_id)
+
+        self.discord = dsdk.Discord(application_id, dsdk.CreateFlags.default)
+
+        self.network_manager = self.discord.get_network_manager()
+        self.network_manager.on_route_update = self.on_route_update
+        self.network_manager.on_message = self.on_message
+
+        self.peer_id = self.network_manager.get_peer_id()
+
+    def on_route_update(self, route):
+        self.route = route
+        print(route)
+        print(f"[Discord {self.instance_id}] Route: {self.route}")
+
+        self.on_route()
+
+    def on_message(self, peer_id, channel_id, data):
+        print(f"[Discord {self.instance_id}] Received from {peer_id} on channel {channel_id}: {repr(data)}")  # noqa: E501
+
 
 game0 = Game(0)
 game1 = Game(1)
 
 
-def onGame0Route():
+def on_game0_route():
     if not game1.connected:
-        print(f"[Discord {game1.instanceId}] Connecting to other peer {game0.peerId} on route {game0.route}")  # noqa: E501
-        game1.networkManager.OpenPeer(game0.peerId, game0.route)
-        game1.networkManager.OpenChannel(game0.peerId, 0, True)  # reliable channel
-        game1.networkManager.OpenChannel(game0.peerId, 1, False)  # unreliable channel
+        print(f"[Discord {game1.instance_id}] Connecting to other peer {game0.peer_id} on route {game0.route}")  # noqa: E501
+        game1.network_manager.open_peer(game0.peer_id, game0.route)
+        game1.network_manager.open_channel(game0.peer_id, 0, True)  # reliable channel
+        game1.network_manager.open_channel(game0.peer_id, 1, False)  # unreliable channel
         game1.connected = True
     else:
-        game1.networkManager.UpdatePeer(game1.peerId, game1.route)
+        game1.network_manager.update_peer(game1.peer_id, game1.route)
 
 
-def onGame1Route():
+def on_game1_route():
     if not game0.connected:
-        print(f"[Discord {game0.instanceId}] Connecting to other peer {game1.peerId} on route {game1.route}")  # noqa: E501
-        game0.networkManager.OpenPeer(game1.peerId, game1.route)
-        game0.networkManager.OpenChannel(game1.peerId, 0, True)  # reliable channel
-        game0.networkManager.OpenChannel(game1.peerId, 1, False)  # unreliable channel
+        print(f"[Discord {game0.instance_id}] Connecting to other peer {game1.peer_id} on route {game1.route}")  # noqa: E501
+        game0.network_manager.open_peer(game1.peer_id, game1.route)
+        game0.network_manager.open_channel(game1.peer_id, 0, True)  # reliable channel
+        game0.network_manager.open_channel(game1.peer_id, 1, False)  # unreliable channel
         game0.connected = True
-
     else:
-        game0.networkManager.UpdatePeer(game0.peerId, game0.route)
+        game0.network_manager.update_peer(game0.peer_id, game0.route)
 
 
-game0.onRoute = onGame0Route
-game1.onRoute = onGame1Route
+game0.on_route = on_game0_route
+game1.on_route = on_game1_route
 
 count = 0
-nextPacket = 0
+next_packet = 0
 
 while 1:
     time.sleep(1/30)
-    game0.discord.RunCallbacks()
-    game1.discord.RunCallbacks()
+    game0.discord.run_callbacks()
+    game1.discord.run_callbacks()
 
-    game0.networkManager.Flush()
-    game1.networkManager.Flush()
+    game0.network_manager.flush()
+    game1.network_manager.flush()
 
-    if game0.connected and game1.connected and time.time() > nextPacket:
+    if game0.connected and game1.connected and time.time() > next_packet:
         if count == 30:
-            print(f"[Discord {game1.instanceId}] Closing connection to peer {game0.peerId}")
-            game1.networkManager.ClosePeer(game0.peerId)
+            print(f"[Discord {game1.instance_id}] Closing connection to peer {game0.peer_id}.")
+            game1.network_manager.close_peer(game0.peer_id)
 
         # We stop after 40 (*2) sent packets.
         if count == 40:
             break
 
         else:
-            game0.networkManager.SendMessage(
-                game1.peerId, 0, ("reliable " + str(count)).encode("ascii"))
-            print(f"[Discord {game0.instanceId}] Sent a packet to {game1.peerId} on channel 0")
-            game0.networkManager.SendMessage(
-                game1.peerId, 1, ("not reliable " + str(count)).encode("ascii"))
-            print(f"[Discord {game0.instanceId}] Sent a packet to {game1.peerId} on channel 1")
+            game0.network_manager.send_message(
+                game1.peer_id, 0,
+                (f"Reliable {count}").encode("ascii")
+            )
+            print(f"[Discord {game0.instance_id}] Sent a packet to {game1.peer_id} on channel 0.")
+            game0.network_manager.send_message(
+                game1.peer_id, 1,
+                (f"Not reliable {count}").encode("ascii")
+            )
+            print(f"[Discord {game0.instance_id}] Sent a packet to {game1.peer_id} on channel 1.")
             count += 1
 
-            nextPacket = time.time() + 0.5
+            next_packet = time.time() + 0.5

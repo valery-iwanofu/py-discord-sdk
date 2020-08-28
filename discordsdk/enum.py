@@ -7,120 +7,120 @@ else:
 
 
 class Result(IntEnum):
-    Ok = 0
-    ServiceUnavailable = 1
-    InvalidVersion = 2
-    LockFailed = 3
-    InternalError = 4
-    InvalidPayload = 5
-    InvalidCommand = 6
-    InvalidPermissions = 7
-    NotFetched = 8
-    NotFound = 9
-    Conflict = 10
-    InvalidSecret = 11
-    InvalidJoinSecret = 12
-    NoEligibleActivity = 13
-    InvalidInvite = 14
-    NotAuthenticated = 15
-    InvalidAccessToken = 16
-    ApplicationMismatch = 17
-    InvalidDataUrl = 18
-    InvalidBase64 = 19
-    NotFiltered = 20
-    LobbyFull = 21
-    InvalidLobbySecret = 22
-    InvalidFilename = 23
-    InvalidFileSize = 24
-    InvalidEntitlement = 25
-    NotInstalled = 26
-    NotRunning = 27
-    InsufficientBuffer = 28
-    PurchaseCanceled = 29
-    InvalidGuild = 30
-    InvalidEvent = 31
-    InvalidChannel = 32
-    InvalidOrigin = 33
-    RateLimited = 34
-    OAuth2Error = 35
-    SelectChannelTimeout = 36
-    GetGuildTimeout = 37
-    SelectVoiceForceRequired = 38
-    CaptureShortcutAlreadyListening = 39
-    UnauthorizedForAchievement = 40
-    InvalidGiftCode = 41
-    PurchaseError = 42
-    TransactionAborted = 43
-    # DrawingInitFailed = 44
+    ok = 0
+    service_unavailable = 1
+    invalid_version = 2
+    lock_failed = 3
+    internal_error = 4
+    invalid_payload = 5
+    invalid_command = 6
+    invalid_permissions = 7
+    not_fetched = 8
+    not_found = 9
+    conflict = 10
+    invalid_secret = 11
+    invalid_join_secret = 12
+    no_eligible_activity = 13
+    invalid_invite = 14
+    not_authenticated = 15
+    invalid_access_token = 16
+    application_mismatch = 17
+    invalid_data_url = 18
+    invalid_base_64 = 19
+    not_filtered = 20
+    lobby_full = 21
+    invalid_lobby_secret = 22
+    invalid_filename = 23
+    invalid_file_size = 24
+    invalid_entitlement = 25
+    not_installed = 26
+    not_running = 27
+    insufficient_buffer = 28
+    purchase_canceled = 29
+    invalid_guild = 30
+    invalid_event = 31
+    invalid_channel = 32
+    invalid_origin = 33
+    rate_limited = 34
+    oauth2_error = 35
+    select_channel_timeout = 36
+    get_guild_timeout = 37
+    select_voice_force_required = 38
+    capture_shortcut_already_listening = 39
+    unauthorized_for_achievement = 40
+    invalid_gift_code = 41
+    purchase_error = 42
+    transaction_aborted = 43
+    drawing_init_failed = 44
 
 
 class LogLevel(IntEnum):
-    Error = 0
-    Warning = 1
-    Info = 2
-    Debug = 3
+    error = 0
+    warning = 1
+    info = 2
+    debug = 3
 
 
 class CreateFlags(IntFlag):
-    Default = 0
-    NoRequireDiscord = 1
+    default = 0
+    no_require_discord = 1
 
 
 class UserFlag(IntFlag):
-    Partner = 2
-    HypeSquadEvents = 4
-    HypeSquadHouse1 = 64
-    HypeSquadHouse2 = 128
-    HypeSquadHouse3 = 256
+    partner = 2
+    hype_squad_events = 4
+    hype_squad_house_1 = 64
+    hype_squad_house_2 = 128
+    hype_squad_house_3 = 256
 
 
 class PremiumType(IntEnum):
-    None_ = 0
-    Tier1 = 1
-    Tier2 = 2
+    none_ = 0
+    tier_1 = 1
+    tier_2 = 2
 
 
 class ActivityType(IntEnum):
-    Playing = 0
-    Streaming = 1
-    Listening = 2
-    Custom = 4
+    playing = 0
+    streaming = 1
+    listening = 2
+    custom = 4
 
 
 class ActivityJoinRequestReply(IntEnum):
-    No = 0
-    Yes = 1
-    Ignore = 2
+    no = 0
+    yes = 1
+    ignore = 2
 
 
 class ActivityActionType(IntEnum):
-    Join = 1
-    Spectate = 2
+    join = 1
+    spectate = 2
 
 
 class RelationshipType(IntEnum):
-    None_ = 0
-    Friend = 1
-    Blocked = 2
-    PendingIncoming = 3
-    PendingOutgoing = 4
-    Implicit = 5
+    none_ = 0
+    friend = 1
+    blocked = 2
+    pending_incoming = 3
+    pending_outgoing = 4
+    implicit = 5
 
 
 class Status(IntEnum):
-    Offline = 0
-    Online = 1
-    Idle = 2
-    DoNotDisturb = 3
+    offline = 0
+    online = 1
+    idle = 2
+    do_not_disturb = 3
 
 
 class ImageType(IntEnum):
-    User = 0
+    user = 0
 
 
 class LobbyType(IntEnum):
-    Private = 1
-    Public = 2
+    private = 1
+    public = 2
 
 
 class LobbySearchComparison(IntEnum):

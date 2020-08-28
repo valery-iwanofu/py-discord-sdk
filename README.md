@@ -51,7 +51,8 @@ You can also **report issues**. Just open an issue and I will look into it!
 
 - Better organisation of submodules.
 - Docs.
-- CI/CD,
+- CI/CD.
+- Update sdk.py to use type annotations.
 
 ## Examples
 
@@ -64,12 +65,12 @@ import time
 
 import discordsdk as dsdk
 
-app = dsdk.Discord(APPLICATION_ID, dsdk.CreateFlags.Default)
+app = dsdk.Discord(APPLICATION_ID, dsdk.CreateFlags.default)
 
-# Don't forget to call RunCallbacks
+# Don't forget to call run_callbacks
 while 1:
     time.sleep(1/10)
-    app.RunCallbacks()
+    app.run_callbacks()
 ```
 
 ### Get current user
@@ -79,23 +80,22 @@ import time
 
 import discordsdk as dsdk
 
-app = dsdk.Discord(APPLICATION_ID, dsdk.CreateFlags.Default)
+app = dsdk.Discord(APPLICATION_ID, dsdk.CreateFlags.default)
 
-userManager = app.GetUserManager()
-
-
-def onCurrUserUpdate():
-    user = userManager.GetCurrentUser()
-    print(f"Current user : {user.Username}#{user.Discriminator}")
+user_manager = app.get_user_manager()
 
 
-userManager.OnCurrentUserUpdate = onCurrUserUpdate
+def on_curr_user_update():
+    user = user_manager.get_current_user()
+    print(f"Current user : {user.username}#{user.discriminator}")
 
-# Don't forget to call RunCallbacks
+
+user_manager.on_current_user_update = on_curr_user_update
+
+# Don't forget to call run_callbacks
 while 1:
     time.sleep(1/10)
-    app.RunCallbacks()
-
+    app.run_callbacks()
 ```
 
 ### Set activity
@@ -105,29 +105,29 @@ import time
 
 import discordsdk as dsdk
 
-app = dsdk.Discord(APPLICATION_ID, dsdk.CreateFlags.Default)
+app = dsdk.Discord(APPLICATION_ID, dsdk.CreateFlags.default)
 
-activityManager = app.GetActivityManager()
+activity_manager = app.get_activity_manager()
 
 activity = dsdk.Activity()
-activity.State = "Testing Game SDK"
-activity.Party.Id = "my_super_party_id"
-activity.Party.Size.CurrentSize = 4
-activity.Party.Size.MaxSize = 8
-activity.Secrets.Join = "my_super_secret"
+activity.state = "Testing Game SDK"
+activity.party.id = "my_super_party_id"
+activity.party.size.current_size = 4
+activity.party.size.max_size = 8
+activity.secrets.join = "my_super_secret"
 
 
 def callback(result):
-    if result == dsdk.Result.Ok:
+    if result == dsdk.Result.ok:
         print("Successfully set the activity!")
     else:
         raise Exception(result)
 
 
-activityManager.UpdateActivity(activity, callback)
+activity_manager.update_activity(activity, callback)
 
-# Don't forget to call RunCallbacks
+# Don't forget to call run_callbacks
 while 1:
     time.sleep(1/10)
-    app.RunCallbacks()
+    app.run_callbacks()
 ```
