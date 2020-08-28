@@ -23,7 +23,7 @@ class Discord:
 
     core: sdk.IDiscordCore = None
 
-    def __init__(self, clientId: int, flags: CreateFlags):
+    def __init__(self, client_id: int, flags: CreateFlags):
         self._garbage = []
 
         self._activity_manager = ActivityManager()
@@ -42,7 +42,7 @@ class Discord:
         version = sdk.DiscordVersion(2)
 
         params = sdk.DiscordCreateParams()
-        params.client_id = clientId
+        params.client_id = client_id
         params.flags = flags
 
         sdk.DiscordCreateParamsSetDefault(params)
