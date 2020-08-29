@@ -387,7 +387,7 @@ class LobbyManager:
         lobby_secret = sdk.DiscordLobbySecret()
 
         result = self._internal.get_lobby_activity_secret(self._internal, lobby_id, lobby_secret)
-        if result != result.ok:
+        if result != Result.ok:
             raise get_exception(result)
 
         return lobby_secret.value.decode("utf8")
