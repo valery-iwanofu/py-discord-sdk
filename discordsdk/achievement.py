@@ -25,8 +25,8 @@ class AchievementManager:
 
     def set_user_achievement(
         self,
-        achievementId: int,
-        percentComplete: int,
+        achievement_id: int,
+        percent_complete: int,
         callback: t.Callable[[Result], None]
     ) -> None:
         """
@@ -44,8 +44,8 @@ class AchievementManager:
 
         self._internal.set_user_achievement(
             self._internal,
-            achievementId,
-            percentComplete,
+            achievement_id,
+            percent_complete,
             ctypes.c_void_p(),
             c_callback
         )
@@ -84,19 +84,19 @@ class AchievementManager:
             index,
             achievement
         ))
-        if resuok != Result.ok:
+        if result != Result.ok:
             raise get_exception(result)
 
         return UserAchievement(internal=achievement)
 
-    def get_user_achievement(self, achievementId: int) -> None:
+    def get_user_achievement(self, achievement_id: int) -> None:
         """
         Gets the user achievement for the given achievement id.
         """
         achievement = sdk.DiscordUserAchievement()
         result = Result(self._internal.get_user_achievement(
             self._internal,
-            achievementId,
+            achievement_id,
             achievement
         ))
         if result != Result.ok:

@@ -41,11 +41,11 @@ class ActivityManager:
         result = Result(self._internal.register_command(self._internal, command.encode("utf8")))
         return result
 
-    def register_steam(self, steamId: int) -> Result:
+    def register_steam(self, steam_id: int) -> Result:
         """
         Registers your game's Steam app id for the protocol `steam://run-game-id/<id>`.
         """
-        result = Result(self._internal.register_steam(self._internal, steamId))
+        result = Result(self._internal.register_steam(self._internal, steam_id))
         return result
 
     def update_activity(self, activity: Activity, callback: t.Callable[[Result], None]) -> None:
@@ -87,7 +87,7 @@ class ActivityManager:
 
     def send_request_reply(
         self,
-        userId: int,
+        user_id: int,
         reply: ActivityJoinRequestReply,
         callback: t.Callable[[Result], None]
     ) -> None:
@@ -106,7 +106,7 @@ class ActivityManager:
 
         self._internal.send_request_reply(
             self._internal,
-            userId,
+            user_id,
             reply,
             ctypes.c_void_p(),
             c_callback
@@ -114,7 +114,7 @@ class ActivityManager:
 
     def send_invite(
         self,
-        userId: int,
+        user_id: int,
         type: ActivityActionType,
         content: str,
         callback: t.Callable[[Result], None]
@@ -134,14 +134,14 @@ class ActivityManager:
 
         self._internal.send_invite(
             self._internal,
-            userId,
+            user_id,
             type,
             content.encode("utf8"),
             ctypes.c_void_p(),
             c_callback
         )
 
-    def accept_invite(self, userId: int, callback: t.Callable[[Result], None]) -> None:
+    def accept_invite(self, user_id: int, callback: t.Callable[[Result], None]) -> None:
         """
         Accepts a game invitation from a given userId.
 
@@ -155,14 +155,14 @@ class ActivityManager:
         c_callback = self._internal.accept_invite.argtypes[-1](c_callback)
         self._garbage.append(c_callback)  # prevent it from being garbage collected
 
-        self._internal.accept_invite(self._internal, userId, ctypes.c_void_p(), c_callback)
+        self._internal.accept_invite(self._internal, user_id, ctypes.c_void_p(), c_callback)
 
-    def on_activity_join(self, joinSecret: str) -> None:
+    def on_activity_join(self, join_secret: str) -> None:
         """
         Fires when a user accepts a game chat invite or receives confirmation from Asking to Join.
         """
 
-    def on_activity_spectate(self, spectateSecret: str) -> None:
+    def on_activity_spectate(self, spectate_secret: str) -> None:
         """
         Fires when a user accepts a spectate chat invite or clicks the Spectate button on a user's
         profile.
