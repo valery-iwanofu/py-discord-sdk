@@ -2,7 +2,11 @@ import ctypes
 import os.path
 import typing as t
 
-dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk"))
+try:
+    dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk"))
+except FileNotFoundError:
+    raise FileNotFoundError("Could not locate Discord's SDK DLLs. Check that they are in the /lib directory relative to the folder that the program is executed from.")  # noqa: E501
+
 DiscordCreate = dll.DiscordCreate
 
 DiscordClientId = ctypes.c_int64
