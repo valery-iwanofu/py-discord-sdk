@@ -180,7 +180,7 @@ class LobbyManager:
             sdk.IDiscordLobbyEvents,
             self._on_lobby_update,
             self._on_lobby_delete,
-            self._on_member_connet,
+            self._on_member_connect,
             self._on_member_update,
             self._on_member_disconnect,
             self._on_lobby_message,
@@ -194,7 +194,7 @@ class LobbyManager:
     def _on_lobby_delete(self, event_data, lobby_id, reason):
         self.on_lobby_delete(lobby_id, reason)
 
-    def _on_member_connet(self, event_data, lobby_id, user_id):
+    def _on_member_connect(self, event_data, lobby_id, user_id):
         self.on_member_connect(lobby_id, user_id)
 
     def _on_member_update(self, event_data, lobby_id, user_id):
