@@ -94,7 +94,7 @@ class LobbyMemberTransaction:
         if result != Result.ok:
             raise get_exception(result)
 
-    def DeleteMetadata(self, key: str) -> None:
+    def delete_metadata(self, key: str) -> None:
         """
         Sets metadata value under a given key name for the current user.
         """
