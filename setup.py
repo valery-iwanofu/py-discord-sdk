@@ -6,13 +6,13 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="discordsdk",
     version="0.2.3",
-    author="DoAltPlusF4 & NathaanTFM",
-    author_email="doaltplusf4@gmail.com",
+    author="LennyPhoenix & NathaanTFM",
+    author_email="lennyphoenixc@gmail.com",
     description="Python wrapper around Discord's Game SDK library.",
     license="LICENSE",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/DoAltPlusF4/discord-sdk",
+    url="https://github.com/LennyPhoenix/py-discord-sdk",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
