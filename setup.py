@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="discordsdk",
-    version="0.2.3",
+    version="0.2.4",
     author="LennyPhoenix & NathaanTFM",
     author_email="lennyphoenixc@gmail.com",
     description="Python wrapper around Discord's Game SDK library.",
