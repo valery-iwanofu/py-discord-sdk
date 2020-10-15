@@ -2,7 +2,7 @@
 
 A Python wrapper around Discord's Game SDK.
 
-**NOTE**: This is entirely experimental, and may not work as intended. Please report all bugs to the [GitHub issue tracker](https://github.com/DoAltPlusF4/discord-sdk/issues).
+**NOTE**: This is entirely experimental, and may not work as intended. Please report all bugs to the [GitHub issue tracker](https://github.com/LennyPhoenix/py-discord-sdk/issues).
 
 **Credit to [NathaanTFM](https://github.com/NathaanTFM) for creating the [original library](https://github.com/NathaanTFM/discord-game-sdk-python).**
 
@@ -11,10 +11,10 @@ A Python wrapper around Discord's Game SDK.
 - Install the module:
   - With `PIP`:
     - Stable: `python -m pip install discordsdk`
-    - Latest: `python -m pip install git+https://github.com/DoAltPlusF4/discord-sdk.git`
+    - Latest: `python -m pip install git+https://github.com/LennyPhoenix/py-discord-sdk.git`
   - With `setup.py` (latest):
-    - `git clone https://github.com/DoAltPlusF4/discord-sdk.git`
-    - `cd discord-sdk`
+    - `git clone https://github.com/LennyPhoenix/py-discord-sdk.git`
+    - `cd py-discord-sdk`
     - `python -m setup install`
 - Download [Discord Game SDK (2.5.6)](https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip).
 - Grab the DLL from `discord_game_sdk.zip` in the `lib` directory and put it in your project's `lib` directory.
