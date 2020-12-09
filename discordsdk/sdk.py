@@ -1,9 +1,13 @@
 import ctypes
 import os.path
+import sys
 import typing as t
 
 try:
-    dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk"))
+    if (sys.platform == 'darwin'):
+        dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk.dylib"))
+    else:
+        dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk"))
 except FileNotFoundError:
     raise FileNotFoundError("Could not locate Discord's SDK DLLs. Check that they are in the /lib directory relative to the folder that the program is executed from.")  # noqa: E501
 
