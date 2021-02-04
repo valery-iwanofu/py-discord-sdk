@@ -53,6 +53,7 @@ You can also **report issues**. Just open an issue and I will look into it!
 - Better organisation of submodules.
 - CI/CD.
 - Update sdk.py to use type annotations.
+- Update to Discord SDK 3.2.0.
 
 ## Examples
 
