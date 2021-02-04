@@ -22,6 +22,7 @@ A Python wrapper around Discord's Game SDK.
 ## Documentation
 
 If you need documentation, look at [**the official Game SDK docs**](https://discord.com/developers/docs/game-sdk/sdk-starter-guide); this was made following the official documentation.
+We also have some [work-in-progress wiki docs.](https://github.com/LennyPhoenix/py-discord-sdk/wiki)
 
 ## Features
 
