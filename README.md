@@ -50,7 +50,6 @@ You can also **report issues**. Just open an issue and I will look into it!
 ### Todo List
 
 - Better organisation of submodules.
-- Docs.
 - CI/CD.
 - Update sdk.py to use type annotations.
 
