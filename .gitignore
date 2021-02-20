@@ -10,6 +10,10 @@ __pycache__/
 # C extensions
 *.so
 
+# Pycharm files
+.idea/*
+.idea
+
 # Distribution / packaging
 .Python
 build/
@@ -150,3 +154,5 @@ dmypy.json
 .history
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
+.idea/vcs.xml
+.DS_Store
