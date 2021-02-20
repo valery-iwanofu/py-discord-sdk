@@ -3,15 +3,22 @@ import os.path
 import sys
 import typing as t
 
-try:
-    if (sys.platform == 'darwin'):
-        dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk.dylib"))
-    else:
-        dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk"))
-except FileNotFoundError:
-    raise FileNotFoundError("Could not locate Discord's SDK DLLs. Check that they are in the /lib directory relative to the folder that the program is executed from.")  # noqa: E501
+import sys as _sys
 
-DiscordCreate = dll.DiscordCreate
+if "sphinx" in _sys.modules:
+    setattr(_sys, "is_dsdk_doc_run", True)
+_is_dsdk_doc_run = hasattr(_sys, "is_dsdk_doc_run") and _sys.is_dsdk_doc_run
+
+if not _is_dsdk_doc_run:
+    try:
+        if sys.platform == "darwin":
+            dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk.dylib"))
+        else:
+            dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk"))
+    except FileNotFoundError:
+        raise FileNotFoundError("Could not locate Discord's SDK DLLs. Check that they are in the /lib directory relative to the folder that the program is executed from.")  # noqa: E501
+
+    DiscordCreate = dll.DiscordCreate
 
 DiscordClientId = ctypes.c_int64
 DiscordVersion = ctypes.c_int32
