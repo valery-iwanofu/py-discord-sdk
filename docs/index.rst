@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to py-discord-sdk's documentation!
-==========================================
+Welcome to the Python Discord SDK's documentation!
+==================================================
 
 .. toctree::
    :maxdepth: 2
@@ -12,7 +12,7 @@ Welcome to py-discord-sdk's documentation!
 
 
 
-Indices and tables
+Indices and Tables
 ==================
 
 * :ref:`genindex`
