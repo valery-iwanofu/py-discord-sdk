@@ -44,14 +44,6 @@ discordsdk.enum module
    :undoc-members:
    :show-inheritance:
 
-discordsdk.event module
------------------------
-
-.. automodule:: discordsdk.event
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 discordsdk.exception module
 ---------------------------
 
