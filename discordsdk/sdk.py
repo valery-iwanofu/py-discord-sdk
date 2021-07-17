@@ -13,6 +13,8 @@ if not _is_dsdk_doc_run:
     try:
         if sys.platform == "darwin":
             dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk.dylib"))
+        elif sys.platform == "linux":
+            dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk.so"))
         else:
             dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk"))
     except FileNotFoundError:
