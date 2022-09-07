@@ -40,6 +40,15 @@ def __discord_periodic_callback():
 config.periodic_callbacks.append(__discord_periodic_callback)
 ```
 
+## Build
+Add this lines of code to your project build configuration:
+```python
+init python:
+    build.early_base_patterns.insert(0, ('discord_game_sdk.dll', build.make_file_lists('windows')))
+    build.early_base_patterns.insert(0, ('discord_game_sdk.so', build.make_file_lists('linux')))
+    build.early_base_patterns.insert(0, ('discord_game_sdk.dylib', build.make_file_lists('mac')))
+```
+
 ## Documentation
 
 If you need documentation, look at [**the official Game SDK docs**](https://discord.com/developers/docs/game-sdk/sdk-starter-guide); this was made following the official documentation.
