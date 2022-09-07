@@ -4,20 +4,41 @@ A Python wrapper around Discord's Game SDK.
 
 **NOTE**: This is entirely experimental, and may not work as intended. Please report all bugs to the [GitHub issue tracker](https://github.com/LennyPhoenix/py-discord-sdk/issues).
 
-**Credit to [NathaanTFM](https://github.com/NathaanTFM) for creating the [original library](https://github.com/NathaanTFM/discord-game-sdk-python).**
+**Credit to [NathaanTFM](https://github.com/NathaanTFM) for creating the [original library](https://github.com/NathaanTFM/discord-game-sdk-python) and [LennyPhoenix](https://github.com/LennyPhoenix) for upgrading old project.**
 
 ## Installation
 
 - Install the module:
   - With `PIP`:
-    - Stable: `python -m pip install discordsdk`
-    - Latest: `python -m pip install git+https://github.com/LennyPhoenix/py-discord-sdk.git`
-  - With `setup.py` (latest):
-    - `git clone https://github.com/LennyPhoenix/py-discord-sdk.git`
+    - Latest: `python -m pip install --target /project_root/game git+https://github.com/valery-iwanofu/py-discord-sdk.git`
+  - With `setup.py`:
+    - `git clone https://github.com/valery-iwanofu/py-discord-sdk.git`
     - `cd py-discord-sdk`
-    - `python -m setup install`
+    - `python -m setup install --target /project_root/game .`
+  - Direct download:
+    - Download this repository as archive by clicking on "Download ZIP" in "Code" menu
+    - Grab the `discordsdk` folder from downloaded archive and put it in your project's game directory.
+    ![](screenshots/download_repo.png)
 - Download [Discord Game SDK (2.5.6)](https://dl-game-sdk.discordapp.net/2.5.6/discord_game_sdk.zip).
-- Grab the DLL from `discord_game_sdk.zip` in the `lib` directory and put it in your project's `lib` directory.
+- Grab the DLL from `discord_game_sdk.zip` in the `lib` directory and put it in your project's root directory.
+
+## Integrate
+1. Import `discordsdk` module
+2. Initialize sdk library using `discordsdk.sdk.init_sdk(basedir)`
+3. Create `Discord` instance and store it somewhere
+4. Run periodic callbacks of `Discord` instance somewhere(generally, it can be done in `config.periodic_callbacks`)
+```python
+import discordsdk as dsdk
+
+dsdk.sdk.init_sdk(config.basedir)
+
+discord = dsdk.Discord(APPLICATION_ID, dsdk.CreateFlags.default)
+
+def __discord_periodic_callback():
+    discord.run_callbacks()
+
+config.periodic_callbacks.append(__discord_periodic_callback)
+```
 
 ## Documentation
 
@@ -59,31 +80,12 @@ You can also **report issues**. Just open an issue and I will look into it!
 
 You can find more examples in the `examples/` directory.
 
-### Create a Discord instance
-
-```python
-import time
-
-import discordsdk as dsdk
-
-app = dsdk.Discord(APPLICATION_ID, dsdk.CreateFlags.default)
-
-# Don't forget to call run_callbacks
-while 1:
-    time.sleep(1/10)
-    app.run_callbacks()
-```
-
 ### Get current user
 
 ```python
-import time
+discord = # see how to create discord instance above
 
-import discordsdk as dsdk
-
-app = dsdk.Discord(APPLICATION_ID, dsdk.CreateFlags.default)
-
-user_manager = app.get_user_manager()
+user_manager = discord.get_user_manager()
 
 
 def on_curr_user_update():
@@ -92,23 +94,14 @@ def on_curr_user_update():
 
 
 user_manager.on_current_user_update = on_curr_user_update
-
-# Don't forget to call run_callbacks
-while 1:
-    time.sleep(1/10)
-    app.run_callbacks()
 ```
 
 ### Set activity
 
 ```python
-import time
+discord = # see how to create discord instance above
 
-import discordsdk as dsdk
-
-app = dsdk.Discord(APPLICATION_ID, dsdk.CreateFlags.default)
-
-activity_manager = app.get_activity_manager()
+activity_manager = discord.get_activity_manager()
 
 activity = dsdk.Activity()
 activity.state = "Testing Game SDK"
@@ -126,9 +119,4 @@ def callback(result):
 
 
 activity_manager.update_activity(activity, callback)
-
-# Don't forget to call run_callbacks
-while 1:
-    time.sleep(1/10)
-    app.run_callbacks()
 ```
