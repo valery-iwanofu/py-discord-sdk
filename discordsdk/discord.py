@@ -24,6 +24,9 @@ class Discord:
     core: sdk.IDiscordCore = None
 
     def __init__(self, client_id: int, flags: CreateFlags):
+        if sdk.DiscordCreate is None:
+            raise ValueError('SDK is not initialized. Use sdk.init_sdk() to do it')
+
         self._garbage = []
 
         self._activity_manager = ActivityManager()

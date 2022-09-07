@@ -9,16 +9,33 @@ if "sphinx" in _sys.modules:
     setattr(_sys, "is_dsdk_doc_run", True)
 _is_dsdk_doc_run = hasattr(_sys, "is_dsdk_doc_run") and _sys.is_dsdk_doc_run
 
-if not _is_dsdk_doc_run:
+dll = None
+DiscordCreate = None
+
+
+def init_sdk(base_dir):
+    global DiscordCreate
+    global dll
+
+    if dll:
+        return
+
+    filename = os.path.join(base_dir, "discord_game_sdk")
     try:
         if sys.platform == "darwin":
-            dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk.dylib"))
+            suffix = ".dylib"
+            # dll = ctypes.CDLL(os.path.abspath("discord_game_sdk.dylib"))
         elif sys.platform == "linux":
-            dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk.so"))
+            suffix = ".so"
+            # dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk.so"))
         else:
-            dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk"))
+            suffix = ""
+            # dll = ctypes.CDLL(os.path.abspath("lib/discord_game_sdk"))
+        dll = ctypes.CDLL(os.path.abspath(filename + suffix))
+
     except FileNotFoundError:
-        raise FileNotFoundError("Could not locate Discord's SDK DLLs. Check that they are in the /lib directory relative to the folder that the program is executed from.")  # noqa: E501
+        raise FileNotFoundError(
+            "Could not locate Discord's SDK DLLs. Check that they are in the basedir of Ren'Py project.")  # noqa: E501
 
     DiscordCreate = dll.DiscordCreate
 
